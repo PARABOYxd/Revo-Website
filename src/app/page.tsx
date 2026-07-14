@@ -9,7 +9,12 @@ import ScrollTrigger from "gsap/ScrollTrigger";
 import WaitlistForm from "@/components/WaitlistForm";
 import CityMap from "@/components/CityMap";
 import PhoneFrame from "@/components/PhoneFrame";
-import { Flame, MapPin, Activity, Navigation, Users, Lock, Globe } from "lucide-react";
+import HowItWorks from "@/components/HowItWorks";
+import ScarcityStrip from "@/components/ScarcityStrip";
+import FAQ from "@/components/FAQ";
+import { Flame, MapPin, Activity, Navigation, Users, Lock, Globe, Share2 } from "lucide-react";
+import { WAITLIST_BASE_COUNT } from "@/lib/config";
+import { track } from "@/lib/analytics";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
@@ -98,6 +103,7 @@ export default function Home() {
   // Dynamic time detection
   const [timePeriod, setTimePeriod] = React.useState<"morning" | "afternoon" | "evening" | "night">("morning");
   const [activeScreenIndex, setActiveScreenIndex] = React.useState(0);
+  const [waitlistCount, setWaitlistCount] = React.useState(WAITLIST_BASE_COUNT);
 
   React.useEffect(() => {
     const hour = new Date().getHours();
@@ -109,6 +115,17 @@ export default function Home() {
       setTimePeriod("evening");
     } else {
       setTimePeriod("night");
+    }
+  }, []);
+
+  React.useEffect(() => {
+    track("page_view");
+    try {
+      const raw = localStorage.getItem("revo_waitlist_signups");
+      const signups = raw ? JSON.parse(raw) : [];
+      setWaitlistCount(WAITLIST_BASE_COUNT + signups.length);
+    } catch {
+      // localStorage unavailable — keep the base count
     }
   }, []);
 
@@ -179,7 +196,9 @@ export default function Home() {
       tlShowcase.to(screens[0] as Element, { opacity: 0, duration: 0.4 }, 0.5)
         .fromTo(screens[1] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<")
         .to(screens[1] as Element, { opacity: 0, duration: 0.4 }, 1.5)
-        .fromTo(screens[2] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<");
+        .fromTo(screens[2] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<")
+        .to(screens[2] as Element, { opacity: 0, duration: 0.4 }, 2.5)
+        .fromTo(screens[3] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<");
     });
 
     mm.add("(max-width: 1023px)", () => {
@@ -282,6 +301,11 @@ export default function Home() {
           <div id="hero-waitlist" className="mt-10 w-full max-w-sm scroll-mt-32">
             <WaitlistForm />
           </div>
+
+          <p className="mt-5 flex items-center gap-1.5 text-[11px] font-bold text-gray-500">
+            <Users className="w-3.5 h-3.5 text-[#16A34A]" />
+            Join <span className="tabular-nums text-[#1F2937]">{waitlistCount.toLocaleString()}+</span> runners already on the list
+          </p>
         </div>
       </section>
 
@@ -547,6 +571,57 @@ export default function Home() {
                   </div>
                 </div>
 
+                {/* Screen 4: Shareable Card */}
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 3 ? "opacity-100" : "opacity-0"}`}>
+                  {/* Status Bar */}
+                  <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
+                    <span>9:41</span>
+                    <div className="flex items-center gap-1">
+                      <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-1.5">
+                      <Share2 className="w-4 h-4 text-[#16A34A]" />
+                      <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Weekly Recap</span>
+                    </div>
+                    <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">Shareable</span>
+                  </div>
+
+                  <div className="flex-1 flex flex-col justify-center">
+                    <div className="bg-gradient-to-br from-[#16A34A] to-[#0f7a35] rounded-2xl p-4 shadow-lg text-white flex flex-col gap-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Shivaji Park Hub</p>
+                          <p className="text-[15px] font-black leading-tight">7-Day Recap</p>
+                        </div>
+                        <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                          <Flame className="w-4 h-4" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <p className="text-[13px] font-black leading-none">32.4</p>
+                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">KM Moved</p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <p className="text-[13px] font-black leading-none">7</p>
+                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Day Streak</p>
+                        </div>
+                        <div className="bg-white/10 rounded-lg p-2 text-center">
+                          <p className="text-[13px] font-black leading-none">#1</p>
+                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Local Rank</p>
+                        </div>
+                      </div>
+                      <button className="w-full bg-white text-[#16A34A] text-[8.5px] font-black uppercase tracking-widest py-2 rounded-lg flex items-center justify-center gap-1.5">
+                        <Share2 className="w-3 h-3" /> Share Your Card
+                      </button>
+                    </div>
+                    <p className="text-[8.5px] text-gray-400 mt-3 text-center leading-relaxed px-2">Auto-generated after every session. Share your recap on WhatsApp or Instagram.</p>
+                  </div>
+                </div>
+
                 {/* Common Tab Bar (Visible on all screens) */}
                 <div className="absolute bottom-0 left-0 right-0 h-12 bg-white/90 backdrop-blur border-t border-gray-100 flex items-center justify-around px-2 z-40">
                   <div className="flex flex-col items-center gap-0.5 cursor-pointer">
@@ -586,12 +661,19 @@ export default function Home() {
                 <Flame className={`w-4 h-4 ${activeScreenIndex === 1 ? "text-[#16A34A]" : "text-gray-400"}`} />
                 <span className="text-[9px] font-bold uppercase tracking-wide">My Streak</span>
               </button>
-              <button 
+              <button
                 onClick={() => setActiveScreenIndex(2)}
                 className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all duration-300 ${activeScreenIndex === 2 ? "bg-white text-[#16A34A] shadow-md shadow-black/5" : "text-gray-500 hover:text-gray-800"}`}
               >
                 <MapPin className={`w-4 h-4 ${activeScreenIndex === 2 ? "text-[#16A34A]" : "text-gray-400"}`} />
                 <span className="text-[9px] font-bold uppercase tracking-wide">Rankings</span>
+              </button>
+              <button
+                onClick={() => setActiveScreenIndex(3)}
+                className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all duration-300 ${activeScreenIndex === 3 ? "bg-white text-[#16A34A] shadow-md shadow-black/5" : "text-gray-500 hover:text-gray-800"}`}
+              >
+                <Share2 className={`w-4 h-4 ${activeScreenIndex === 3 ? "text-[#16A34A]" : "text-gray-400"}`} />
+                <span className="text-[9px] font-bold uppercase tracking-wide">Recap</span>
               </button>
             </div>
 
@@ -631,12 +713,26 @@ export default function Home() {
                     </div>
                   </div>
                 )}
+                {activeScreenIndex === 3 && (
+                  <div className="flex items-start gap-3 transition-opacity duration-300">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
+                      <Share2 className="w-3.5 h-3.5 text-[#16A34A]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-[#1F2937] leading-none mb-1">Shareable Recap Cards</p>
+                      <p className="text-[10px] text-gray-500 font-sans leading-normal">Every week your stats become a ready-to-share card — post your streak and rank straight to WhatsApp or Instagram.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
           </div>
         </div>
       </section>
+
+      {/* ── HOW IT WORKS ───────────────────────────────────────────── */}
+      <HowItWorks />
 
       {/* ── SCENE 3: MAP EXPANSION (Pure Map Moment) ─────────────── */}
       {/* <section ref={mapMomentRef} className="h-screen w-full relative bg-[#060d1a] overflow-hidden flex items-center justify-center">
@@ -755,6 +851,14 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── FAQ ────────────────────────────────────────────────────── */}
+      <FAQ />
+
+      {/* ── SCARCITY STRIP ─────────────────────────────────────────── */}
+      <div className="py-6">
+        <ScarcityStrip />
+      </div>
+
       {/* ── SCENE 6: FINAL CTA (Waitlist) ─────────────────────────── */}
       <section id="waitlist" className="relative min-h-screen flex flex-col justify-center items-center bg-[#FAFBFC] overflow-hidden py-20">
         
@@ -800,13 +904,14 @@ export default function Home() {
       <footer className="bg-white border-t border-gray-200 py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
-            Revo © 2026 · Own the streets where you live
+            Revo © 2026 · Made in Mumbai
           </p>
           <div className="flex gap-6 text-[9px] font-bold uppercase tracking-widest text-gray-400">
             <Link href="/privacy" className="hover:text-[#16A34A] transition-colors cursor-pointer">Privacy</Link>
             <Link href="/terms" className="hover:text-[#16A34A] transition-colors cursor-pointer">Terms</Link>
-            <span className="hover:text-gray-900 transition-colors cursor-pointer">Twitter</span>
-            <span className="hover:text-gray-900 transition-colors cursor-pointer">Instagram</span>
+            {/* TODO: swap in real profile URLs */}
+            <a href="#" className="hover:text-gray-900 transition-colors cursor-pointer">Twitter</a>
+            <a href="#" className="hover:text-gray-900 transition-colors cursor-pointer">Instagram</a>
           </div>
         </div>
       </footer>

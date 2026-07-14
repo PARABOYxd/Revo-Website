@@ -13,13 +13,6 @@ export const metadata: Metadata = {
     description: "Your runs become permanent glowing routes on your city's live map.",
     url: "https://revo.run",
     siteName: "Revo",
-    images: [
-      {
-        url: "/main-logo-transparent.png",
-        width: 800,
-        height: 600,
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -27,7 +20,6 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "REVO | Leave Your Mark",
     description: "Every run leaves a visible mark. Join the Revo waitlist.",
-    images: ["/main-logo-transparent.png"],
   },
   icons: {
     icon: "/main-logo-transparent.png",

@@ -22,7 +22,7 @@ export default function PrivacyPage() {
           
           <h2 className="font-display font-bold text-lg text-gray-900 mt-8 uppercase tracking-wide">1. Information We Collect</h2>
           <p>
-            When you sign up for the Revo waitlist, we collect your email address, city, and optional locality details to keep you updated on our rollout progress in your region.
+            When you sign up for the Revo waitlist, we collect your email address and neighbourhood area to keep you updated on our rollout progress in your region.
           </p>
 
           <h2 className="font-display font-bold text-lg text-gray-900 mt-8 uppercase tracking-wide">2. Location Data</h2>
