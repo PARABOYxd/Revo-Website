@@ -71,3 +71,32 @@ html.lenis, html.lenis body {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+/* CityMap ambient animation — CSS-driven (compositor only) instead of a
+   per-frame requestAnimationFrame + setState loop, which was forcing full
+   SVG re-renders/repaints on every frame and tanking mobile scroll perf. */
+@keyframes route-dash-march {
+  to { stroke-dashoffset: -17px; }
+}
+
+@keyframes hotspot-pulse {
+  0% { transform: scale(1); opacity: 1; }
+  100% { transform: scale(3.75); opacity: 0; }
+}
+
+.route-dash {
+  animation: route-dash-march 1.417s linear infinite;
+}
+
+.hotspot-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hotspot-pulse 11s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-dash,
+  .hotspot-ring {
+    animation: none;
+  }
+}

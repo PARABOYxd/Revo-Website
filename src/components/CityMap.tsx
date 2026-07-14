@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React from "react";
 
 interface CityMapProps {
   intensity?: number;
@@ -8,24 +8,6 @@ interface CityMapProps {
 }
 
 export default function CityMap({ intensity = 1, className = "" }: CityMapProps) {
-  const [phase, setPhase] = useState(0);
-  const rafRef = useRef<number | null>(null);
-  const startRef = useRef<number | null>(null);
-
-  useEffect(() => {
-    const animate = (ts: number) => {
-      if (!startRef.current) startRef.current = ts;
-      setPhase(((ts - startRef.current) / 1000) % 100);
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-    };
-  }, []);
-
-  const dashOffset = phase * 12;
-
   // Generic geometric grid-like arterial roads representing any major Indian city
   const arterials = [
     "M 520,0 C 510,100 508,200 515,300 C 522,400 518,500 520,600 C 522,700 518,800 520,900", // Central Axis
@@ -132,12 +114,13 @@ export default function CityMap({ intensity = 1, className = "" }: CityMapProps)
           <path d={r.d} fill="none" stroke="rgba(22,163,74,0.2)" strokeWidth="8" strokeLinecap="round" filter="url(#glow-soft)" />
           <path
             d={r.d}
+            className="route-dash"
             fill="none"
             stroke="rgba(22,163,74,0.8)"
             strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray="10 7"
-            strokeDashoffset={-dashOffset + i * 15}
+            style={{ animationDelay: `${(-15 * i) / 12}s` }}
           />
         </g>
       ))}
@@ -151,11 +134,11 @@ export default function CityMap({ intensity = 1, className = "" }: CityMapProps)
           <circle cx={h.cx} cy={h.cy} r="3.5" fill="white" />
           <circle
             cx={h.cx} cy={h.cy}
-            r={8 + ((phase * 2 + i * 22) % 22)}
+            r={8}
+            className="hotspot-ring"
             fill="none"
             stroke="rgba(22,163,74,0.4)"
             strokeWidth="1.5"
-            opacity={1 - ((phase * 2 + i * 22) % 22) / 22}
           />
           <text x={h.cx + 14} y={h.cy - 6} fill="#1F2937" fontSize="8" fontFamily="monospace" fontWeight="800" letterSpacing="0.1em">{h.label}</text>
           <text x={h.cx + 14} y={h.cy + 7} fill="#6B7280" fontSize="6.5" fontFamily="monospace" letterSpacing="0.05em">{h.runners} ACTIVE</text>
