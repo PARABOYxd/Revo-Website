@@ -97,6 +97,7 @@ export default function Home() {
 
   // Dynamic time detection
   const [timePeriod, setTimePeriod] = React.useState<"morning" | "afternoon" | "evening" | "night">("morning");
+  const [activeScreenIndex, setActiveScreenIndex] = React.useState(0);
 
   React.useEffect(() => {
     const hour = new Date().getHours();
@@ -116,49 +117,49 @@ export default function Home() {
   useGSAP(() => {
     let mm = gsap.matchMedia(container);
 
-    /* ── SCENE 1: HERO — simple fade out ── */
-    const tlHero = gsap.timeline({
-      scrollTrigger: {
-        trigger: heroRef.current,
-        start: "top top",
-        end: "+=80%",
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-      }
-    });
-
-    // Fade the entire hero content out as the user scrolls
-    tlHero.to(".hero-content", {
-      opacity: 0,
-      y: -30,
-      ease: "power2.in",
-      duration: 1,
-    }, 0);
-
-    // Simultaneously darken the map so transition feels intentional
-    tlHero.to(".hero-map-overlay", {
-      opacity: 0.85,
-      ease: "power2.in",
-      duration: 1,
-    }, 0);
-
-    /* ── SCENE 2: APP SHOWCASE ── */
-    const tlShowcase = gsap.timeline({
-      scrollTrigger: {
-        trigger: showcaseRef.current,
-        start: "top top",
-        end: "+=200%",
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-      }
-    });
-
-    // 1. Phone scales up slightly
-    tlShowcase.fromTo(phoneShowcaseRef.current, { scale: 0.9, y: "5vh" }, { scale: 1, y: "0vh", duration: 1 }, 0);
-
     mm.add("(min-width: 1024px)", () => {
+      /* ── SCENE 1: HERO — simple fade out ── */
+      const tlHero = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: "top top",
+          end: "+=80%",
+          scrub: 1,
+          pin: true,
+          anticipatePin: 1,
+        }
+      });
+
+      // Fade the entire hero content out as the user scrolls
+      tlHero.to(".hero-content", {
+        opacity: 0,
+        y: -30,
+        ease: "power2.in",
+        duration: 1,
+      }, 0);
+
+      // Simultaneously darken the map so transition feels intentional
+      tlHero.to(".hero-map-overlay", {
+        opacity: 0.85,
+        ease: "power2.in",
+        duration: 1,
+      }, 0);
+
+      /* ── SCENE 2: APP SHOWCASE ── */
+      const tlShowcase = gsap.timeline({
+        scrollTrigger: {
+          trigger: showcaseRef.current,
+          start: "top top",
+          end: "+=200%",
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+        }
+      });
+
+      // 1. Phone scales up slightly
+      tlShowcase.fromTo(phoneShowcaseRef.current, { scale: 0.9, y: "5vh" }, { scale: 1, y: "0vh", duration: 1 }, 0);
+
       // 2. Connector lines draw out (Desktop only)
       const paths = gsap.utils.toArray(".connector-path");
       paths.forEach((path: any) => {
@@ -172,32 +173,48 @@ export default function Home() {
 
       // 4. Cards fade in gracefully (Desktop only)
       tlShowcase.fromTo(".lg\\:block .showcase-card", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, 0.4);
+
+      // 5. Screen UI cycles continuously while scrolling
+      const screens = gsap.utils.toArray(".showcase-screen");
+      tlShowcase.to(screens[0] as Element, { opacity: 0, duration: 0.4 }, 0.5)
+        .fromTo(screens[1] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<")
+        .to(screens[1] as Element, { opacity: 0, duration: 0.4 }, 1.5)
+        .fromTo(screens[2] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<");
     });
 
     mm.add("(max-width: 1023px)", () => {
-      // 4. Mobile stacked cards fade in gracefully (Mobile only)
-      tlShowcase.fromTo(".lg\\:hidden .showcase-card", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, 0.2);
+      // Mobile Showcase Fade-in (No Pinning, No Scrubbing)
+      gsap.fromTo(phoneShowcaseRef.current, 
+        { opacity: 0, y: 30, scale: 0.95 },
+        { 
+          opacity: 1, 
+          y: 0, 
+          scale: 1, 
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: showcaseRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none"
+          }
+        }
+      );
     });
 
-    // 5. Screen UI cycles continuously while scrolling
-    const screens = gsap.utils.toArray(".showcase-screen");
-    tlShowcase.to(screens[0] as Element, { opacity: 0, duration: 0.4 }, 0.5)
-      .fromTo(screens[1] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<")
-      .to(screens[1] as Element, { opacity: 0, duration: 0.4 }, 1.5)
-      .fromTo(screens[2] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<");
-
     /* ── SCENE 3: GALLERY ── */
-    gsap.to(".gallery-track", {
-      xPercent: -65,
-      ease: "none",
-      scrollTrigger: {
-        trigger: galleryRef.current,
-        start: "top top",
-        end: "+=200%",
-        pin: true,
-        scrub: 1,
-        anticipatePin: 1,
-      }
+    mm.add("(min-width: 1024px)", () => {
+      gsap.to(".gallery-track", {
+        xPercent: -65,
+        ease: "none",
+        scrollTrigger: {
+          trigger: galleryRef.current,
+          start: "top top",
+          end: "+=200%",
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+        }
+      });
     });
 
     /* ── SCENE 5: LIVE LEDGER TEXT THEME SWITCH ── */
@@ -235,7 +252,7 @@ export default function Home() {
       </nav>
 
       {/* ── SCENE 1: THE HERO ─────────────────────────────────────── */}
-      <section ref={heroRef} className="h-screen w-full relative flex items-center justify-center overflow-hidden bg-[#FAFBFC]">
+      <section ref={heroRef} className="min-h-screen lg:h-screen w-full relative flex items-center justify-center overflow-hidden bg-[#FAFBFC] py-20 lg:py-0">
         {/* Map background */}
         <div className="absolute inset-0 w-full h-full">
           <CityMap intensity={0.75} className="w-full h-full object-cover" />
@@ -247,6 +264,11 @@ export default function Home() {
         </div>
 
         <div className="hero-content relative z-10 flex flex-col items-center justify-center text-center px-6 mt-16 pointer-events-auto">
+          
+          {/* Active Grid Badge */}
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16A34A]/10 border border-[#16A34A]/25 text-[#16A34A] text-[9.5px] font-black uppercase tracking-widest mb-6 animate-pulse">
+            <Globe className="w-3.5 h-3.5" /> India's Live Active Grid
+          </span>
           
           <h1 className="font-display font-black text-[#1F2937] leading-[0.85] tracking-tighter" style={{ fontSize: "clamp(64px, 10vw, 150px)" }}>
             Leave your<br />
@@ -265,7 +287,7 @@ export default function Home() {
 
 
       {/* ── SCENE 2: APP SHOWCASE (APPLE STYLE) ───────────────────── */}
-      <section ref={showcaseRef} className="h-screen w-full relative bg-[#FAFBFC] overflow-hidden flex flex-col justify-between py-6 lg:py-10">
+      <section ref={showcaseRef} className="w-full relative bg-[#FAFBFC] overflow-hidden flex flex-col justify-start lg:justify-between py-6 lg:py-10 lg:h-screen">
         {/* Subtle Coordinate Grid Background */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'linear-gradient(#1F2937 1px, transparent 1px), linear-gradient(90deg, #1F2937 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         
@@ -280,7 +302,7 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 w-full h-[12%] bg-gradient-to-t from-[#FAFBFC] to-transparent z-30 pointer-events-none" />
 
         {/* Center Canvas — dynamically fills the remaining space */}
-        <div className="relative w-full flex-1 max-w-7xl mx-auto flex items-center justify-center z-20 min-h-0">
+        <div className="relative w-full lg:flex-1 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-center z-20 min-h-0 py-4 lg:py-0">
           
           {/* SVG Connectors Canvas (Desktop Only) */}
           <svg viewBox="0 0 1200 700" className="absolute inset-0 w-full h-full pointer-events-none z-10 hidden lg:block" preserveAspectRatio="xMidYMid meet">
@@ -389,7 +411,7 @@ export default function Home() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[#16A34A] rounded-[60px] blur-[80px] opacity-[0.12] -z-10 pointer-events-none" />
 
                 {/* Screen 1: Map */}
-                <div className="showcase-screen absolute inset-0 bg-[#FAFBFC]">
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 ${activeScreenIndex === 0 ? "opacity-100" : "opacity-0"}`}>
                   <CityMap intensity={1} />
                   
                   {/* Status Bar */}
@@ -426,7 +448,7 @@ export default function Home() {
                 </div>
 
                 {/* Screen 2: Streak */}
-                <div className="showcase-screen absolute inset-0 bg-[#FAFBFC] opacity-0 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937]">
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 1 ? "opacity-100" : "opacity-0"}`}>
                   {/* Status Bar */}
                   <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
                     <span>9:41</span>
@@ -480,7 +502,7 @@ export default function Home() {
                 </div>
 
                 {/* Screen 3: Leaderboard */}
-                <div className="showcase-screen absolute inset-0 bg-[#FAFBFC] opacity-0 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937]">
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 2 ? "opacity-100" : "opacity-0"}`}>
                   {/* Status Bar */}
                   <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
                     <span>9:41</span>
@@ -548,34 +570,67 @@ export default function Home() {
               </PhoneFrame>
             </div>
 
-            {/* Mobile Stacked Cards (Visible only on mobile/tablet) */}
-            <div className="flex flex-col gap-3 w-full max-w-[340px] mt-8 lg:hidden z-30">
-              <div className="showcase-card opacity-0 bg-white border border-gray-200 rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
-                  <MapPin className="w-3.5 h-3.5 text-[#16A34A]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#1F2937] leading-none mb-1">Hub Domination</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-wide">Conquer local loops</p>
-                </div>
-              </div>
-              <div className="showcase-card opacity-0 bg-white border border-gray-200 rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
-                  <Users className="w-3.5 h-3.5 text-[#16A34A]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#1F2937] leading-none mb-1">Live Co-Presence</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-wide">See active movers real-time</p>
-                </div>
-              </div>
-              <div className="showcase-card opacity-0 bg-white border border-gray-200 rounded-[20px] shadow-[0_4px_12px_rgba(0,0,0,0.03)] px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
-                  <Activity className="w-3.5 h-3.5 text-[#16A34A]" />
-                </div>
-                <div>
-                  <p className="text-xs font-bold text-[#1F2937] leading-none mb-1">Cooperative Glow</p>
-                  <p className="text-[9px] text-gray-400 font-medium uppercase tracking-wide">Merged trails glow brighter</p>
-                </div>
+            {/* Mobile Interactive Segment Tabs (Visible only on mobile/tablet) */}
+            <div className="flex justify-between items-center bg-gray-100/80 backdrop-blur border border-gray-200/50 rounded-2xl p-1.5 w-full max-w-[340px] mt-6 lg:hidden z-30 shadow-sm">
+              <button 
+                onClick={() => setActiveScreenIndex(0)}
+                className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all duration-300 ${activeScreenIndex === 0 ? "bg-white text-[#16A34A] shadow-md shadow-black/5" : "text-gray-500 hover:text-gray-800"}`}
+              >
+                <Navigation className={`w-4 h-4 ${activeScreenIndex === 0 ? "text-[#16A34A]" : "text-gray-400"}`} />
+                <span className="text-[9px] font-bold uppercase tracking-wide">Live Map</span>
+              </button>
+              <button 
+                onClick={() => setActiveScreenIndex(1)}
+                className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all duration-300 ${activeScreenIndex === 1 ? "bg-white text-[#16A34A] shadow-md shadow-black/5" : "text-gray-500 hover:text-gray-800"}`}
+              >
+                <Flame className={`w-4 h-4 ${activeScreenIndex === 1 ? "text-[#16A34A]" : "text-gray-400"}`} />
+                <span className="text-[9px] font-bold uppercase tracking-wide">My Streak</span>
+              </button>
+              <button 
+                onClick={() => setActiveScreenIndex(2)}
+                className={`flex-1 flex flex-col items-center gap-1 py-2 rounded-xl transition-all duration-300 ${activeScreenIndex === 2 ? "bg-white text-[#16A34A] shadow-md shadow-black/5" : "text-gray-500 hover:text-gray-800"}`}
+              >
+                <MapPin className={`w-4 h-4 ${activeScreenIndex === 2 ? "text-[#16A34A]" : "text-gray-400"}`} />
+                <span className="text-[9px] font-bold uppercase tracking-wide">Rankings</span>
+              </button>
+            </div>
+
+            {/* Mobile Active Tab Description Panel */}
+            <div className="w-full max-w-[340px] mt-4 lg:hidden z-30 min-h-[84px]">
+              <div className="bg-white border border-gray-200/50 rounded-2xl p-4 shadow-[0_4px_12px_rgba(0,0,0,0.02)] transition-all duration-300">
+                {activeScreenIndex === 0 && (
+                  <div className="flex items-start gap-3 transition-opacity duration-300">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
+                      <Navigation className="w-3.5 h-3.5 text-[#16A34A]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-[#1F2937] leading-none mb-1">Live Map Active Grid</p>
+                      <p className="text-[10px] text-gray-500 font-sans leading-normal">Your runs and walks map live onto your city's active loop grid. Watch the streets glow as people move.</p>
+                    </div>
+                  </div>
+                )}
+                {activeScreenIndex === 1 && (
+                  <div className="flex items-start gap-3 transition-opacity duration-300">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
+                      <Flame className="w-3.5 h-3.5 text-[#16A34A]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-[#1F2937] leading-none mb-1">Consistency Streak Tracker</p>
+                      <p className="text-[10px] text-gray-500 font-sans leading-normal">Track your daily streaks and consistent habits. Watch your active grid fill up as your streak stays alive.</p>
+                    </div>
+                  </div>
+                )}
+                {activeScreenIndex === 2 && (
+                  <div className="flex items-start gap-3 transition-opacity duration-300">
+                    <div className="w-8 h-8 rounded-full bg-[#16A34A]/10 flex items-center justify-center shrink-0">
+                      <MapPin className="w-3.5 h-3.5 text-[#16A34A]" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-black text-[#1F2937] leading-none mb-1">Live Local Leaderboard</p>
+                      <p className="text-[10px] text-gray-500 font-sans leading-normal">Conquer loops like Shivaji Park to become the local Hub Leader. Rank updates every 5 minutes live.</p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -598,7 +653,7 @@ export default function Home() {
       </section> */}
 
       {/* ── SCENE 4: HORIZONTAL EDITORIAL SPREAD ──────────────────── */}
-      <section ref={galleryRef} className="min-h-screen w-full relative bg-[#FAFBFC] overflow-hidden flex flex-col justify-center pt-28 pb-16">
+      <section ref={galleryRef} className="w-full relative bg-[#FAFBFC] overflow-hidden flex flex-col justify-center py-12 lg:pt-28 lg:pb-16 lg:min-h-screen">
         <div className="max-w-7xl mx-auto px-6 w-full mb-6 flex justify-between items-end">
           <div>
             <p className="text-[10px] text-[#16A34A] font-bold uppercase tracking-[0.25em] mb-2">{activeRoutine.tag}</p>
@@ -609,12 +664,12 @@ export default function Home() {
           <span className="text-[9px] font-bold uppercase tracking-widest text-gray-400 hidden sm:block">Scroll to explore →</span>
         </div>
 
-        <div className="w-full px-6 overflow-visible">
-          <div className="gallery-track flex gap-6 sm:gap-8 w-[250vw] sm:w-[180vw]">
+        <div className="w-full overflow-visible">
+          <div className="gallery-track flex gap-6 sm:gap-8 overflow-x-auto snap-x snap-mandatory scrollbar-none lg:overflow-visible lg:w-[180vw] w-full px-6">
             {activeRoutine.cards.map((c: any, i) => {
               if (c.type === "text") {
                 return (
-                  <div key={i} className="flex-shrink-0 w-[65vw] sm:w-[300px] aspect-[4/3] bg-gradient-to-br from-[#111] to-[#042f1a] rounded-[24px] p-6 flex flex-col justify-between shadow-lg border border-white/5">
+                  <div key={i} className="flex-shrink-0 w-[80vw] sm:w-[300px] snap-center aspect-[4/3] bg-gradient-to-br from-[#111] to-[#042f1a] rounded-[24px] p-6 flex flex-col justify-between shadow-lg border border-white/5">
                     <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">{c.time}</span>
                     <div>
                       <h4 className="font-display font-black text-white text-2xl uppercase leading-tight mb-2 whitespace-pre-line">{c.title}</h4>
@@ -625,7 +680,7 @@ export default function Home() {
               }
               if (c.type === "image") {
                 return (
-                  <div key={i} className="flex-shrink-0 w-[80vw] sm:w-[420px] aspect-[4/3] relative rounded-[24px] overflow-hidden shadow-md group/card border border-gray-200">
+                  <div key={i} className="flex-shrink-0 w-[80vw] sm:w-[420px] snap-center aspect-[4/3] relative rounded-[24px] overflow-hidden shadow-md group/card border border-gray-200">
                     <Image 
                       src={c.image || "/bengaluru_runner_sunrise.png"} 
                       alt={c.location || "City Route"} 
@@ -645,7 +700,7 @@ export default function Home() {
               }
               if (c.type === "text_dark") {
                 return (
-                  <div key={i} className="flex-shrink-0 w-[65vw] sm:w-[300px] aspect-[4/3] bg-white border border-gray-200 rounded-[24px] p-6 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
+                  <div key={i} className="flex-shrink-0 w-[80vw] sm:w-[300px] snap-center aspect-[4/3] bg-white border border-gray-200 rounded-[24px] p-6 flex flex-col justify-between shadow-[0_8px_30px_rgba(0,0,0,0.02)]">
                     <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">{c.time}</span>
                     <div>
                       <h4 className="font-display font-black text-[#1F2937] text-2xl uppercase leading-tight mb-2 whitespace-pre-line">{c.title}</h4>
@@ -656,7 +711,7 @@ export default function Home() {
               }
               if (c.type === "text_accent") {
                 return (
-                  <div key={i} className="flex-shrink-0 w-[65vw] sm:w-[300px] aspect-[4/3] bg-gradient-to-tr from-[#16A34A] to-[#34D399] rounded-[24px] p-6 flex flex-col justify-between shadow-lg text-white border border-white/10">
+                  <div key={i} className="flex-shrink-0 w-[80vw] sm:w-[300px] snap-center aspect-[4/3] bg-gradient-to-tr from-[#16A34A] to-[#34D399] rounded-[24px] p-6 flex flex-col justify-between shadow-lg text-white border border-white/10">
                     <span className="text-white/90 text-[9px] font-bold uppercase tracking-widest">{c.time}</span>
                     <div>
                       <h4 className="font-display font-black text-white text-2xl uppercase leading-tight mb-2 whitespace-pre-line">{c.title}</h4>
