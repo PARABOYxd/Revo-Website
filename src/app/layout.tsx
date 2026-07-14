@@ -1,0 +1,51 @@
+import type { Metadata } from "next";
+import { Space_Grotesk } from "next/font/google";
+import "./globals.css";
+import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+
+const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
+
+export const metadata: Metadata = {
+  title: "REVO | Leave Your Mark",
+  description: "Revo is a nationwide movement platform that transforms individual workouts into a shared community experience. Join the India waitlist.",
+  openGraph: {
+    title: "REVO | Leave Your Mark",
+    description: "Your runs become permanent glowing routes on your city's live map.",
+    url: "https://revo.run",
+    siteName: "Revo",
+    images: [
+      {
+        url: "/logo.png",
+        width: 800,
+        height: 600,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "REVO | Leave Your Mark",
+    description: "Every run leaves a visible mark. Join the Revo waitlist.",
+    images: ["/logo.png"],
+  },
+  icons: {
+    icon: "/logo.png",
+  }
+};
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en" className="antialiased scroll-smooth" suppressHydrationWarning>
+      <body className={`${spaceGrotesk.variable} font-sans`}>
+        <SmoothScrollProvider>
+          {children}
+        </SmoothScrollProvider>
+      </body>
+    </html>
+  );
+}

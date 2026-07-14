@@ -1,0 +1,63 @@
+@import "tailwindcss";
+@source "../components";
+@source "../app";
+
+@theme {
+  --font-sans: var(--font-space-grotesk), sans-serif;
+  --font-display: var(--font-space-grotesk), sans-serif;
+}
+
+@layer base {
+  :root {
+    --background: #FAFBFC;
+    --foreground: #1F2937;
+    --accent: #16A34A;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-space-grotesk), sans-serif;
+  overflow-x: hidden;
+}
+
+/* Lenis Recommended Styles */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+/* Utilities for Flagship Design */
+.hairline-top {
+  border-top: 1px solid rgba(31, 41, 55, 0.08);
+}
+.hairline-bottom {
+  border-bottom: 1px solid rgba(31, 41, 55, 0.08);
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(31, 41, 55, 0.05);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
