@@ -13,6 +13,7 @@ import { Flame, MapPin, Activity, Navigation, Users, Lock, Globe } from "lucide-
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);
+  ScrollTrigger.config({ ignoreMobileResize: true });
 }
 
 // ── DYNAMIC DATA STRUCTURES ──
@@ -92,6 +93,7 @@ export default function Home() {
   const phoneShowcaseRef = useRef<HTMLDivElement>(null);
 
   const galleryRef = useRef<HTMLDivElement>(null);
+  const ledgerRef = useRef<HTMLDivElement>(null);
 
   // Dynamic time detection
   const [timePeriod, setTimePeriod] = React.useState<"morning" | "afternoon" | "evening" | "night">("morning");
@@ -122,6 +124,7 @@ export default function Home() {
         end: "+=80%",
         scrub: 1,
         pin: true,
+        anticipatePin: 1,
       }
     });
 
@@ -148,25 +151,33 @@ export default function Home() {
         end: "+=200%",
         pin: true,
         scrub: 1,
+        anticipatePin: 1,
       }
     });
 
     // 1. Phone scales up slightly
     tlShowcase.fromTo(phoneShowcaseRef.current, { scale: 0.9, y: "5vh" }, { scale: 1, y: "0vh", duration: 1 }, 0);
 
-    // 2. Connector lines draw out (Desktop)
-    const paths = gsap.utils.toArray(".connector-path");
-    paths.forEach((path: any) => {
-      const length = path.getTotalLength();
-      gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
-      tlShowcase.to(path, { strokeDashoffset: 0, duration: 0.8, ease: "power1.inOut" }, 0.2);
+    mm.add("(min-width: 1024px)", () => {
+      // 2. Connector lines draw out (Desktop only)
+      const paths = gsap.utils.toArray(".connector-path");
+      paths.forEach((path: any) => {
+        const length = path.getTotalLength();
+        gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+        tlShowcase.to(path, { strokeDashoffset: 0, duration: 0.8, ease: "power1.inOut" }, 0.2);
+      });
+
+      // 3. Tiny glowing endpoints appear
+      tlShowcase.fromTo(".connector-dot", { opacity: 0, scale: 0 }, { opacity: 0.8, scale: 1, duration: 0.4, stagger: 0.1 }, 0.6);
+
+      // 4. Cards fade in gracefully (Desktop only)
+      tlShowcase.fromTo(".lg\\:block .showcase-card", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, 0.4);
     });
 
-    // 3. Tiny glowing endpoints appear
-    tlShowcase.fromTo(".connector-dot", { opacity: 0, scale: 0 }, { opacity: 0.8, scale: 1, duration: 0.4, stagger: 0.1 }, 0.6);
-
-    // 4. Cards fade in gracefully
-    tlShowcase.fromTo(".showcase-card", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, 0.4);
+    mm.add("(max-width: 1023px)", () => {
+      // 4. Mobile stacked cards fade in gracefully (Mobile only)
+      tlShowcase.fromTo(".lg\\:hidden .showcase-card", { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.15 }, 0.2);
+    });
 
     // 5. Screen UI cycles continuously while scrolling
     const screens = gsap.utils.toArray(".showcase-screen");
@@ -185,6 +196,26 @@ export default function Home() {
         end: "+=200%",
         pin: true,
         scrub: 1,
+        anticipatePin: 1,
+      }
+    });
+
+    /* ── SCENE 5: LIVE LEDGER TEXT THEME SWITCH ── */
+    ScrollTrigger.create({
+      trigger: ledgerRef.current,
+      start: "top 80px",
+      end: "bottom 80px",
+      onEnter: () => {
+        gsap.to(".nav-brand-text", { color: "#FFFFFF", duration: 0.2 });
+      },
+      onLeave: () => {
+        gsap.to(".nav-brand-text", { color: "#1F2937", duration: 0.2 });
+      },
+      onEnterBack: () => {
+        gsap.to(".nav-brand-text", { color: "#FFFFFF", duration: 0.2 });
+      },
+      onLeaveBack: () => {
+        gsap.to(".nav-brand-text", { color: "#1F2937", duration: 0.2 });
       }
     });
 
@@ -197,8 +228,8 @@ export default function Home() {
       <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-start">
           <div className="flex items-center gap-4">
-            <Image src="/logo.png" alt="Revo Logo" width={44} height={44} priority />
-            <span className="font-sans font-bold tracking-[0.25em] uppercase text-base mix-blend-difference text-white">Revo</span>
+            <Image src="/main-logo-transparent.png" alt="Revo Logo" width={24} height={24} priority style={{ height: "auto" }} />
+            <span className="nav-brand-text font-sans font-bold tracking-[0.25em] uppercase text-base text-[#1F2937] transition-colors duration-200">Revo</span>
           </div>
         </div>
       </nav>
@@ -599,6 +630,7 @@ export default function Home() {
                       src={c.image || "/bengaluru_runner_sunrise.png"} 
                       alt={c.location || "City Route"} 
                       fill 
+                      sizes="(max-width: 768px) 80vw, 420px"
                       className="object-cover grayscale contrast-[1.1] brightness-[0.85] group-hover/card:grayscale-0 group-hover/card:brightness-[0.95] transition-all duration-700 ease-out" 
                     />
                     {/* Dark gradient overlay */}
@@ -640,7 +672,7 @@ export default function Home() {
       </section>
 
       {/* ── SCENE 5: LIVE LEDGER ────────────────────────────────────── */}
-      <section className="bg-[#111] py-20 sm:py-28 text-white relative">
+      <section ref={ledgerRef} className="bg-[#111] py-20 sm:py-28 text-white relative">
         <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12">
           <div className="lg:col-span-5 lg:sticky lg:top-32 self-start">
             <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[#16A34A] mb-4">Right Now</p>

@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: "Revo",
     images: [
       {
-        url: "/logo.png",
+        url: "/main-logo-transparent.png",
         width: 800,
         height: 600,
       },
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "REVO | Leave Your Mark",
     description: "Every run leaves a visible mark. Join the Revo waitlist.",
-    images: ["/logo.png"],
+    images: ["/main-logo-transparent.png"],
   },
   icons: {
-    icon: "/logo.png",
+    icon: "/main-logo-transparent.png",
   }
 };
 
