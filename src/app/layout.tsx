@@ -1,16 +1,28 @@
 import type { Metadata } from "next";
-import { Space_Grotesk } from "next/font/google";
+import { Bebas_Neue, Inter } from "next/font/google";
 import "./globals.css";
 import SmoothScrollProvider from "@/components/SmoothScrollProvider";
+import CursorGlow from "@/components/CursorGlow";
 
-const spaceGrotesk = Space_Grotesk({ subsets: ["latin"], variable: "--font-space-grotesk" });
+const bebasNeue = Bebas_Neue({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-bebas",
+});
+
+const inter = Inter({
+  weight: ["400", "500", "600", "700", "800", "900"],
+  subsets: ["latin"],
+  variable: "--font-inter",
+});
 
 export const metadata: Metadata = {
   title: "REVO | Leave Your Mark",
-  description: "Revo is a nationwide movement platform that transforms individual workouts into a shared community experience. Join the India waitlist.",
+  description:
+    "You showed up at 6 AM. Nobody saw it. Until now. REVO turns every run and walk into a visible mark on your neighbourhood's live map. Launching first in Mumbai.",
   openGraph: {
     title: "REVO | Leave Your Mark",
-    description: "Your runs become permanent glowing routes on your city's live map.",
+    description: "Every morning thousands move through this city. Every evening it disappeared. Not anymore.",
     url: "https://revo.run",
     siteName: "Revo",
     locale: "en_US",
@@ -19,11 +31,12 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "REVO | Leave Your Mark",
-    description: "Every run leaves a visible mark. Join the Revo waitlist.",
+    description: "Every morning thousands move through this city. Every evening it disappeared. Not anymore.",
   },
+  themeColor: "#1A1A2E",
   icons: {
     icon: "/main-logo-transparent.png",
-  }
+  },
 };
 
 export default function RootLayout({
@@ -33,7 +46,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="antialiased scroll-smooth" suppressHydrationWarning>
-      <body className={`${spaceGrotesk.variable} font-sans`}>
+      <body className={`${bebasNeue.variable} ${inter.variable} antialiased font-sans bg-[#1A1A2E] text-white`}>
+        <CursorGlow />
         <SmoothScrollProvider>
           {children}
         </SmoothScrollProvider>

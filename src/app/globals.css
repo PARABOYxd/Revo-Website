@@ -3,23 +3,30 @@
 @source "../app";
 
 @theme {
-  --font-sans: var(--font-space-grotesk), sans-serif;
-  --font-display: var(--font-space-grotesk), sans-serif;
+  --font-sans: var(--font-inter), sans-serif;
+  --font-display: var(--font-bebas), sans-serif;
 }
 
 @layer base {
   :root {
-    --background: #FAFBFC;
-    --foreground: #1F2937;
-    --accent: #16A34A;
+    --background: #1A1A2E;
+    --foreground: #F5F3EF;
+    --accent: #FF5A1F;
+    --surface: #22223D;
+    --surface-2: #2A2A47;
   }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: var(--font-space-grotesk), sans-serif;
+  font-family: var(--font-sans), sans-serif;
   overflow-x: hidden;
+}
+
+::selection {
+  background: #FF5A1F;
+  color: #1A1A2E;
 }
 
 /* Lenis Recommended Styles */
@@ -45,17 +52,17 @@ html.lenis, html.lenis body {
 
 /* Utilities for Flagship Design */
 .hairline-top {
-  border-top: 1px solid rgba(31, 41, 55, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 .hairline-bottom {
-  border-bottom: 1px solid rgba(31, 41, 55, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .glass-panel {
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(34, 34, 61, 0.6);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(31, 41, 55, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .text-balance {
@@ -72,9 +79,24 @@ html.lenis, html.lenis body {
   scrollbar-width: none;  /* Firefox */
 }
 
-/* CityMap ambient animation — CSS-driven (compositor only) instead of a
-   per-frame requestAnimationFrame + setState loop, which was forcing full
-   SVG re-renders/repaints on every frame and tanking mobile scroll perf. */
+/* Dark scrollbar for the whole document */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #1A1A2E;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a3a5c;
+  border-radius: 999px;
+  border: 2px solid #1A1A2E;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FF5A1F;
+}
+
+/* ── Heat-bloom ambient animation (CityMap) ──
+   CSS-driven (compositor only), never a per-frame JS/state loop. */
 @keyframes route-dash-march {
   to { stroke-dashoffset: -17px; }
 }
@@ -82,6 +104,11 @@ html.lenis, html.lenis body {
 @keyframes hotspot-pulse {
   0% { transform: scale(1); opacity: 1; }
   100% { transform: scale(3.75); opacity: 0; }
+}
+
+@keyframes heat-bloom {
+  0%, 100% { opacity: 0.35; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.08); }
 }
 
 .route-dash {
@@ -94,9 +121,25 @@ html.lenis, html.lenis body {
   animation: hotspot-pulse 11s linear infinite;
 }
 
+.heat-bloom {
+  animation: heat-bloom 6s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .route-dash,
-  .hotspot-ring {
+  .hotspot-ring,
+  .heat-bloom {
     animation: none;
   }
+}
+
+/* Tasteful grain texture for dark sections */
+.grain::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }

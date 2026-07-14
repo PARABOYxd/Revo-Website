@@ -31,16 +31,16 @@ export default function FAQ() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section className="w-full bg-[#FAFBFC] py-20 sm:py-28 px-6">
+    <section className="w-full bg-[#1A1A2E] py-24 sm:py-28 px-6">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
-          <p className="text-[10px] text-[#16A34A] font-bold uppercase tracking-[0.25em] mb-3">FAQ</p>
-          <h2 className="font-display font-black text-[#1F2937] leading-[0.95] tracking-tight" style={{ fontSize: "clamp(28px, 4.5vw, 44px)" }}>
+          <p className="text-[10px] text-[#FF5A1F] font-bold uppercase tracking-[0.3em] mb-3">FAQ</p>
+          <h2 className="font-display uppercase text-white leading-[0.95] tracking-wide" style={{ fontSize: "clamp(28px, 4.5vw, 48px)" }}>
             Questions, answered.
           </h2>
         </div>
 
-        <div className="divide-y divide-gray-200 border-t border-b border-gray-200">
+        <div className="divide-y divide-white/10 border-t border-b border-white/10">
           {FAQS.map((f, i) => {
             const isOpen = openIndex === i;
             return (
@@ -48,11 +48,11 @@ export default function FAQ() {
                 <button
                   onClick={() => setOpenIndex(isOpen ? null : i)}
                   aria-expanded={isOpen}
-                  className="w-full flex items-center justify-between gap-4 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]/40 rounded-lg"
+                  className="w-full flex items-center justify-between gap-4 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5A1F]/40 rounded-lg"
                 >
-                  <span className="font-display font-bold text-base sm:text-lg text-[#1F2937]">{f.q}</span>
+                  <span className="font-display text-lg sm:text-xl tracking-wide text-white uppercase">{f.q}</span>
                   <ChevronDown
-                    className={`w-4 h-4 text-[#16A34A] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-[#FF5A1F] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
                 <AnimatePresence initial={false}>
@@ -64,7 +64,7 @@ export default function FAQ() {
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="text-sm text-gray-500 leading-relaxed pb-5 pr-8">{f.a}</p>
+                      <p className="text-sm text-white/50 leading-relaxed pb-5 pr-8">{f.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>
