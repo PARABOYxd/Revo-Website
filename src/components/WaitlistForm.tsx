@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, Check, Copy, MessageCircle } from "lucide-react";
 import { AREAS, WAITLIST_BASE_COUNT, WHATSAPP_SHARE_TEXT, type Area } from "@/lib/config";
 import { track } from "@/lib/analytics";
@@ -132,18 +131,10 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
 
   return (
     <div className="w-full text-left">
-      <AnimatePresence mode="wait">
 
         {/* STEP 1: Minimalist Inline Email Capsule */}
         {step === 1 && (
-          <motion.div
-            key="step1"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full"
-          >
+          <div className="w-full animate-fade-in-up">
             <form onSubmit={handleEmailSubmit} className="relative">
               <div className={`flex items-center rounded-full p-1.5 transition-all duration-300 ${
                 dark
@@ -184,19 +175,12 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
                 </p>
               )}
             </form>
-          </motion.div>
+          </div>
         )}
 
         {/* STEP 2: Smooth profiling form */}
         {step === 2 && (
-          <motion.div
-            key="step2"
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className={`w-full max-w-md border rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl mx-auto ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-100'}`}
-          >
+          <div className={`w-full max-w-md border rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl mx-auto animate-fade-in-up ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-100'}`}>
             <div className="space-y-1">
               <h3 className={`font-display font-bold text-2xl tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>Claim your handle</h3>
               <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>You're almost on the list.</p>
@@ -277,41 +261,25 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
                 Complete Registration
               </button>
             </form>
-          </motion.div>
+          </div>
         )}
 
         {/* STEP 3: Success / Returning Ticket */}
         {step === 3 && (
-          <motion.div
-            key="step3"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ type: "spring", stiffness: 260, damping: 20 }}
-            className={`w-full max-w-md border rounded-3xl overflow-hidden shadow-2xl relative mx-auto ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-200'}`}
-          >
+          <div className={`w-full max-w-md border rounded-3xl overflow-hidden shadow-2xl relative mx-auto animate-fade-in-up ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-200'}`}>
             <div className="p-8 pb-6 border-b border-dashed border-gray-200 relative">
-              <motion.div
-                className="absolute top-0 right-0 p-4"
-                initial={{ scale: 0, rotate: -20 }}
-                animate={{ scale: 1, rotate: 0 }}
-                transition={{ type: "spring", stiffness: 300, damping: 15, delay: 0.15 }}
-              >
+              <div className="absolute top-0 right-0 p-4">
                 <Check className="w-5 h-5 text-emerald-500" />
-              </motion.div>
+              </div>
               <p className="text-[9px] font-bold text-emerald-500 uppercase tracking-[0.2em] mb-2">
                 {isReturning ? "Already On The List" : "Waitlist Confirmed"}
               </p>
               <h3 className={`font-display font-black text-3xl mb-1 ${dark ? 'text-white' : 'text-gray-900'}`}>
                 {isReturning ? "Welcome back." : "You're in."}
               </h3>
-              <motion.p
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.4 }}
-                className={`text-sm font-bold tabular-nums ${dark ? 'text-emerald-400' : 'text-[#16A34A]'}`}
-              >
+              <p className={`text-sm font-bold tabular-nums ${dark ? 'text-emerald-400' : 'text-[#16A34A]'}`}>
                 Mark #{queuePosition.toLocaleString()} claimed.
-              </motion.p>
+              </p>
 
               <div className="mt-8 space-y-4">
                 <div>
@@ -360,9 +328,8 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
     </div>
   );
 }

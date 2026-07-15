@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 
 const FAQS = [
@@ -55,19 +54,15 @@ export default function FAQ() {
                     className={`w-4 h-4 text-[#16A34A] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
                   />
                 </button>
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <p className="text-sm text-gray-500 leading-relaxed pb-5 pr-8">{f.a}</p>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                <div 
+                  className={`grid transition-all duration-300 ease-out overflow-hidden ${
+                    isOpen ? "grid-rows-[1fr] opacity-100 pb-5" : "grid-rows-[0fr] opacity-0"
+                  }`}
+                >
+                  <div className="min-h-0">
+                    <p className="text-sm text-gray-500 leading-relaxed pr-8">{f.a}</p>
+                  </div>
+                </div>
               </div>
             );
           })}

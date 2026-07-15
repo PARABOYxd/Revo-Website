@@ -79,13 +79,13 @@ export default function CityMap({ intensity = 1, className = "" }: CityMapProps)
             <stop offset="100%" stopColor="#16a34a" stopOpacity="0" />
           </radialGradient>
         ))}
+        <pattern id="map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(31, 41, 55, 0.03)" strokeWidth="1" />
+        </pattern>
       </defs>
 
       {/* Grid */}
-      <g stroke="rgba(31, 41, 55, 0.03)" strokeWidth="1" fill="none">
-        {[...Array(23)].map((_, i) => <line key={`gh${i}`} x1="0" y1={i * 40} x2="1100" y2={i * 40} />)}
-        {[...Array(28)].map((_, i) => <line key={`gv${i}`} x1={i * 40} y1="0" x2={i * 40} y2="900" />)}
-      </g>
+      <rect width="1100" height="900" fill="url(#map-grid)" />
 
       {/* Generic Body of Water (No longer Arabian Sea specifically) */}
       <path

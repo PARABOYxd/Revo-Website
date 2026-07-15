@@ -104,6 +104,8 @@ export default function Home() {
   const [timePeriod, setTimePeriod] = React.useState<"morning" | "afternoon" | "evening" | "night">("morning");
   const [activeScreenIndex, setActiveScreenIndex] = React.useState(0);
   const [waitlistCount, setWaitlistCount] = React.useState(WAITLIST_BASE_COUNT);
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     const hour = new Date().getHours();
@@ -127,6 +129,14 @@ export default function Home() {
     } catch {
       // localStorage unavailable — keep the base count
     }
+
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    setMounted(true);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   // Auto-cycle mobile showcase screens every 2.0 seconds (resets dynamically on user manual tap)
@@ -210,25 +220,6 @@ export default function Home() {
         .fromTo(screens[3] as Element, { opacity: 0 }, { opacity: 1, duration: 0.4 }, "<");
     });
 
-    mm.add("(max-width: 1023px)", () => {
-      // Mobile Showcase Fade-in (No Pinning, No Scrubbing)
-      gsap.fromTo(phoneShowcaseRef.current, 
-        { opacity: 0, y: 30, scale: 0.95 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          scale: 1, 
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: showcaseRef.current,
-            start: "top 80%",
-            toggleActions: "play none none none"
-          }
-        }
-      );
-    });
-
     /* ── SCENE 3: GALLERY ── */
     mm.add("(min-width: 1024px)", () => {
       gsap.to(".gallery-track", {
@@ -283,7 +274,7 @@ export default function Home() {
       <section ref={heroRef} className="min-h-screen lg:h-screen w-full relative flex items-center justify-center overflow-hidden bg-[#FAFBFC] py-20 lg:py-0">
         {/* Map background */}
         <div className="absolute inset-0 w-full h-full">
-          <CityMap intensity={0.75} className="w-full h-full object-cover" />
+          {mounted && <CityMap intensity={0.75} className="w-full h-full object-cover" />}
           <div className="absolute inset-0 bg-gradient-to-t from-[#FAFBFC] via-transparent to-transparent pointer-events-none" />
           {/* Radial mask to fade map details directly behind the text for maximum legibility */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(250,251,252,0.85)_15%,rgba(250,251,252,0.3)_60%,transparent_100%)] pointer-events-none" />
@@ -445,190 +436,206 @@ export default function Home() {
 
                 {/* Screen 1: Map */}
                 <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 ${activeScreenIndex === 0 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
-                  <CityMap intensity={1} />
-                  
-                  {/* Status Bar */}
-                  <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
-                    <span>9:41</span>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
-                    </div>
-                  </div>
-
-                  {/* App Search Bar overlay */}
-                  <div className="absolute top-[12%] left-[5%] right-[5%] bg-white/95 backdrop-blur rounded-xl px-3 py-2.5 border border-gray-200/50 flex items-center gap-2 shadow-md shadow-black/5 z-30">
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse shrink-0" />
-                    <span className="text-[8.5px] font-bold text-gray-400">Search active hubs in Mumbai...</span>
-                  </div>
-
-                  {/* Active Hub Card overlay */}
-                  <div className="absolute bottom-[18%] left-[5%] right-[5%] bg-white rounded-2xl p-3.5 border border-gray-200/50 shadow-xl shadow-black/5 z-30 flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-[11px] font-black text-[#1F2937]">Shivaji Park Hub</p>
-                        <p className="text-[8px] text-[#16A34A] font-mono font-bold uppercase tracking-wider">342 active now</p>
+                  {(!isMobile || activeScreenIndex === 0) && (
+                    <>
+                      <CityMap intensity={1} />
+                      
+                      {/* Status Bar */}
+                      <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
+                        </div>
                       </div>
-                      <span className="bg-[#16A34A]/10 text-[#16A34A] text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md">Rank #1</span>
-                    </div>
-                    <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
-                      <div className="w-[78%] h-full bg-[#16A34A] rounded-full" />
-                    </div>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-[7.5px] text-gray-400 font-medium">Daily Target: 5.0 km</span>
-                      <button className="bg-[#16A34A] hover:bg-[#15803d] text-white text-[8px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-lg shadow-sm">Join Run</button>
-                    </div>
-                  </div>
+
+                      {/* App Search Bar overlay */}
+                      <div className="absolute top-[12%] left-[5%] right-[5%] bg-white/95 backdrop-blur rounded-xl px-3 py-2.5 border border-gray-200/50 flex items-center gap-2 shadow-md shadow-black/5 z-30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#16A34A] animate-pulse shrink-0" />
+                        <span className="text-[8.5px] font-bold text-gray-400">Search active hubs in Mumbai...</span>
+                      </div>
+
+                      {/* Active Hub Card overlay */}
+                      <div className="absolute bottom-[18%] left-[5%] right-[5%] bg-white rounded-2xl p-3.5 border border-gray-200/50 shadow-xl shadow-black/5 z-30 flex flex-col gap-2">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <p className="text-[11px] font-black text-[#1F2937]">Shivaji Park Hub</p>
+                            <p className="text-[8px] text-[#16A34A] font-mono font-bold uppercase tracking-wider">342 active now</p>
+                          </div>
+                          <span className="bg-[#16A34A]/10 text-[#16A34A] text-[7px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md">Rank #1</span>
+                        </div>
+                        <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                          <div className="w-[78%] h-full bg-[#16A34A] rounded-full" />
+                        </div>
+                        <div className="flex justify-between items-center mt-1">
+                          <span className="text-[7.5px] text-gray-400 font-medium">Daily Target: 5.0 km</span>
+                          <button className="bg-[#16A34A] hover:bg-[#15803d] text-white text-[8px] font-black uppercase tracking-widest px-2.5 py-1.5 rounded-lg shadow-sm">Join Run</button>
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Screen 2: Streak */}
                 <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 1 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
-                  {/* Status Bar */}
-                  <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
-                    <span>9:41</span>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
-                    </div>
-                  </div>
+                  {(!isMobile || activeScreenIndex === 1) && (
+                    <>
+                      {/* Status Bar */}
+                      <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
+                        </div>
+                      </div>
 
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-1.5">
-                      <Flame className="w-4 h-4 text-[#16A34A]" />
-                      <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Active Streak</span>
-                    </div>
-                    <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">July 2026</span>
-                  </div>
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-1.5">
+                          <Flame className="w-4 h-4 text-[#16A34A]" />
+                          <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Active Streak</span>
+                        </div>
+                        <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">July 2026</span>
+                      </div>
 
-                  <div className="flex-1 flex flex-col justify-center gap-5">
-                    <div className="flex items-baseline justify-center">
-                      <p className="text-[#1F2937] font-black leading-none" style={{ fontSize: "64px" }}>14</p>
-                      <span className="text-[12px] font-black text-[#16A34A] ml-1">DAYS</span>
-                    </div>
-                    
-                    <div className="bg-white border border-gray-100 rounded-xl p-3 flex justify-between shadow-sm">
-                      <div className="text-center">
-                        <p className="text-[11px] font-black text-[#1F2937]">84.2</p>
-                        <p className="text-[6.5px] text-gray-400 font-bold uppercase">Distance (KM)</p>
-                      </div>
-                      <div className="border-l border-gray-100" />
-                      <div className="text-center">
-                        <p className="text-[11px] font-black text-[#1F2937]">5:12</p>
-                        <p className="text-[6.5px] text-gray-400 font-bold uppercase">Avg Pace</p>
-                      </div>
-                      <div className="border-l border-gray-100" />
-                      <div className="text-center">
-                        <p className="text-[11px] font-black text-[#1F2937]">7.8k</p>
-                        <p className="text-[6.5px] text-gray-400 font-bold uppercase">Avg Steps</p>
-                      </div>
-                    </div>
+                      <div className="flex-1 flex flex-col justify-center gap-5">
+                        <div className="flex items-baseline justify-center">
+                          <p className="text-[#1F2937] font-black leading-none" style={{ fontSize: "64px" }}>14</p>
+                          <span className="text-[12px] font-black text-[#16A34A] ml-1">DAYS</span>
+                        </div>
+                        
+                        <div className="bg-white border border-gray-100 rounded-xl p-3 flex justify-between shadow-sm">
+                          <div className="text-center">
+                            <p className="text-[11px] font-black text-[#1F2937]">84.2</p>
+                            <p className="text-[6.5px] text-gray-400 font-bold uppercase">Distance (KM)</p>
+                          </div>
+                          <div className="border-l border-gray-100" />
+                          <div className="text-center">
+                            <p className="text-[11px] font-black text-[#1F2937]">5:12</p>
+                            <p className="text-[6.5px] text-gray-400 font-bold uppercase">Avg Pace</p>
+                          </div>
+                          <div className="border-l border-gray-100" />
+                          <div className="text-center">
+                            <p className="text-[11px] font-black text-[#1F2937]">7.8k</p>
+                            <p className="text-[6.5px] text-gray-400 font-bold uppercase">Avg Steps</p>
+                          </div>
+                        </div>
 
-                    <div>
-                      <div className="flex justify-between items-center mb-1.5">
-                        <span className="text-[8px] text-gray-400 font-bold uppercase">Consistency Grid</span>
-                        <span className="text-[8px] text-[#16A34A] font-bold">14/21 days active</span>
+                        <div>
+                          <div className="flex justify-between items-center mb-1.5">
+                            <span className="text-[8px] text-gray-400 font-bold uppercase">Consistency Grid</span>
+                            <span className="text-[8px] text-[#16A34A] font-bold">14/21 days active</span>
+                          </div>
+                          <div className="grid grid-cols-7 gap-1.5">
+                            {[...Array(14)].map((_, i) => <div key={i} className="aspect-square rounded bg-[#16A34A] shadow-sm shadow-[#16A34A]/20" />)}
+                            {[...Array(7)].map((_, i) => <div key={i} className="aspect-square rounded border border-gray-200 bg-gray-100/50" />)}
+                          </div>
+                        </div>
                       </div>
-                      <div className="grid grid-cols-7 gap-1.5">
-                        {[...Array(14)].map((_, i) => <div key={i} className="aspect-square rounded bg-[#16A34A] shadow-sm shadow-[#16A34A]/20" />)}
-                        {[...Array(7)].map((_, i) => <div key={i} className="aspect-square rounded border border-gray-200 bg-gray-100/50" />)}
-                      </div>
-                    </div>
-                  </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Screen 3: Leaderboard */}
                 <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 2 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
-                  {/* Status Bar */}
-                  <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
-                    <span>9:41</span>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4 text-[#16A34A]" />
-                      <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Shivaji Park</span>
-                    </div>
-                    <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">Live Rank</span>
-                  </div>
-
-                  <div className="flex-1 flex flex-col pt-3 justify-center">
-                    <p className="text-[#1F2937] font-black text-lg uppercase leading-none mb-1">Hub Leaderboard</p>
-                    <p className="text-gray-400 text-[8px] mb-3">Updated every 5 minutes</p>
-
-                    <div className="space-y-2">
-                      {LEADERBOARD_DATA.slice(0,3).map((r, i) => (
-                        <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${r.you ? "bg-[#16A34A]/10 border border-[#16A34A]/20 shadow-sm" : "bg-white border border-gray-100 shadow-sm"}`}>
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-black ${
-                              r.you ? "bg-[#16A34A] text-white" : i === 0 ? "bg-amber-100 text-amber-700" : i === 1 ? "bg-slate-100 text-slate-700" : "bg-orange-100 text-orange-700"
-                            }`}>
-                              {r.name.split(" ").map(w => w[0]).join("")}
-                            </div>
-                            <div>
-                              <p className="text-[10px] font-black text-gray-800 leading-tight">{r.name}</p>
-                              <p className="text-[7.5px] text-gray-400 font-medium">Rank #{i + 1}</p>
-                            </div>
-                          </div>
-                          <div className="text-right">
-                            <p className="text-[10px] font-black text-gray-800 leading-tight">{r.days}d</p>
-                            <p className="text-[7px] text-[#16A34A] font-bold">STREAK</p>
-                          </div>
+                  {(!isMobile || activeScreenIndex === 2) && (
+                    <>
+                      {/* Status Bar */}
+                      <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
+                      </div>
+
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-1.5">
+                          <MapPin className="w-4 h-4 text-[#16A34A]" />
+                          <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Shivaji Park</span>
+                        </div>
+                        <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">Live Rank</span>
+                      </div>
+
+                      <div className="flex-1 flex flex-col pt-3 justify-center">
+                        <p className="text-[#1F2937] font-black text-lg uppercase leading-none mb-1">Hub Leaderboard</p>
+                        <p className="text-gray-400 text-[8px] mb-3">Updated every 5 minutes</p>
+
+                        <div className="space-y-2">
+                          {LEADERBOARD_DATA.slice(0,3).map((r, i) => (
+                            <div key={i} className={`flex items-center justify-between p-3 rounded-xl ${r.you ? "bg-[#16A34A]/10 border border-[#16A34A]/20 shadow-sm" : "bg-white border border-gray-100 shadow-sm"}`}>
+                              <div className="flex items-center gap-2.5">
+                                <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[8px] font-black ${
+                                  r.you ? "bg-[#16A34A] text-white" : i === 0 ? "bg-amber-100 text-amber-700" : i === 1 ? "bg-slate-100 text-slate-700" : "bg-orange-100 text-orange-700"
+                                }`}>
+                                  {r.name.split(" ").map(w => w[0]).join("")}
+                                </div>
+                                <div>
+                                  <p className="text-[10px] font-black text-gray-800 leading-tight">{r.name}</p>
+                                  <p className="text-[7.5px] text-gray-400 font-medium">Rank #{i + 1}</p>
+                                </div>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-[10px] font-black text-gray-800 leading-tight">{r.days}d</p>
+                                <p className="text-[7px] text-[#16A34A] font-bold">STREAK</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Screen 4: Shareable Card */}
                 <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 3 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
-                  {/* Status Bar */}
-                  <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
-                    <span>9:41</span>
-                    <div className="flex items-center gap-1">
-                      <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between mt-4">
-                    <div className="flex items-center gap-1.5">
-                      <Share2 className="w-4 h-4 text-[#16A34A]" />
-                      <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Weekly Recap</span>
-                    </div>
-                    <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">Shareable</span>
-                  </div>
-
-                  <div className="flex-1 flex flex-col justify-center">
-                    <div className="bg-gradient-to-br from-[#16A34A] to-[#0f7a35] rounded-2xl p-4 shadow-lg text-white flex flex-col gap-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Shivaji Park Hub</p>
-                          <p className="text-[15px] font-black leading-tight">7-Day Recap</p>
-                        </div>
-                        <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
-                          <Flame className="w-4 h-4" />
+                  {(!isMobile || activeScreenIndex === 3) && (
+                    <>
+                      {/* Status Bar */}
+                      <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <span className="w-2.5 h-1.5 border border-gray-800 rounded-sm relative flex items-center px-0.5"><span className="w-full h-full bg-gray-800 rounded-2xs" /></span>
                         </div>
                       </div>
-                      <div className="grid grid-cols-3 gap-2">
-                        <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <p className="text-[13px] font-black leading-none">32.4</p>
-                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">KM Moved</p>
+
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="flex items-center gap-1.5">
+                          <Share2 className="w-4 h-4 text-[#16A34A]" />
+                          <span className="text-[#16A34A] text-[9px] font-bold uppercase tracking-widest">Weekly Recap</span>
                         </div>
-                        <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <p className="text-[13px] font-black leading-none">7</p>
-                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Day Streak</p>
-                        </div>
-                        <div className="bg-white/10 rounded-lg p-2 text-center">
-                          <p className="text-[13px] font-black leading-none">#1</p>
-                          <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Local Rank</p>
-                        </div>
+                        <span className="text-[8px] font-mono bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded-md">Shareable</span>
                       </div>
-                      <button className="w-full bg-white text-[#16A34A] text-[8.5px] font-black uppercase tracking-widest py-2 rounded-lg flex items-center justify-center gap-1.5">
-                        <Share2 className="w-3 h-3" /> Share Your Card
-                      </button>
-                    </div>
-                    <p className="text-[8.5px] text-gray-400 mt-3 text-center leading-relaxed px-2">Auto-generated after every session. Share your recap on WhatsApp or Instagram.</p>
-                  </div>
+
+                      <div className="flex-1 flex flex-col justify-center">
+                        <div className="bg-gradient-to-br from-[#16A34A] to-[#0f7a35] rounded-2xl p-4 shadow-lg text-white flex flex-col gap-4">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="text-[10px] font-black uppercase tracking-widest opacity-80">Shivaji Park Hub</p>
+                              <p className="text-[15px] font-black leading-tight">7-Day Recap</p>
+                            </div>
+                            <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center">
+                              <Flame className="w-4 h-4" />
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="bg-white/10 rounded-lg p-2 text-center">
+                              <p className="text-[13px] font-black leading-none">32.4</p>
+                              <p className="text-[6px] font-bold uppercase opacity-70 mt-1">KM Moved</p>
+                            </div>
+                            <div className="bg-white/10 rounded-lg p-2 text-center">
+                              <p className="text-[13px] font-black leading-none">7</p>
+                              <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Day Streak</p>
+                            </div>
+                            <div className="bg-white/10 rounded-lg p-2 text-center">
+                              <p className="text-[13px] font-black leading-none">#1</p>
+                              <p className="text-[6px] font-bold uppercase opacity-70 mt-1">Local Rank</p>
+                            </div>
+                          </div>
+                          <button className="w-full bg-white text-[#16A34A] text-[8.5px] font-black uppercase tracking-widest py-2 rounded-lg flex items-center justify-center gap-1.5">
+                            <Share2 className="w-3 h-3" /> Share Your Card
+                          </button>
+                        </div>
+                        <p className="text-[8.5px] text-gray-400 mt-3 text-center leading-relaxed px-2">Auto-generated after every session. Share your recap on WhatsApp or Instagram.</p>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Common Tab Bar (Visible on all screens) */}
