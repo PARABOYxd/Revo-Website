@@ -7,14 +7,16 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import WaitlistForm from "@/components/WaitlistForm";
-import CityMap from "@/components/CityMap";
 import PhoneFrame from "@/components/PhoneFrame";
-import HowItWorks from "@/components/HowItWorks";
-import ScarcityStrip from "@/components/ScarcityStrip";
-import FAQ from "@/components/FAQ";
 import { Flame, MapPin, Activity, Navigation, Users, Lock, Globe, Share2 } from "lucide-react";
 import { WAITLIST_BASE_COUNT } from "@/lib/config";
 import { track } from "@/lib/analytics";
+import dynamic from "next/dynamic";
+
+const HowItWorks = dynamic(() => import("@/components/HowItWorks"));
+const ScarcityStrip = dynamic(() => import("@/components/ScarcityStrip"));
+const FAQ = dynamic(() => import("@/components/FAQ"));
+const CityMap = dynamic(() => import("@/components/CityMap"), { ssr: false });
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger, useGSAP);

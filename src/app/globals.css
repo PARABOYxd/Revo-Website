@@ -116,9 +116,13 @@ html.lenis, html.lenis body {
   animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Disable expensive SVG filters on mobile to bypass layout repaint lag */
+/* Disable expensive SVG filters and non-composited animations on mobile to bypass layout repaint lag */
 @media (max-width: 1024px) {
   svg filter, svg [filter] {
     filter: none !important;
+  }
+  .route-dash,
+  .hotspot-ring {
+    animation: none !important;
   }
 }
