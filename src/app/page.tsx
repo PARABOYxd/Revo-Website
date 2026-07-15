@@ -129,12 +129,12 @@ export default function Home() {
     }
   }, []);
 
-  // Auto-cycle mobile showcase screens every 1.5 seconds (resets dynamically on user manual tap)
+  // Auto-cycle mobile showcase screens every 2.0 seconds (resets dynamically on user manual tap)
   React.useEffect(() => {
     if (typeof window !== "undefined" && window.innerWidth >= 1024) return;
     const timer = setTimeout(() => {
-      setActiveScreenIndex((prev) => (prev + 1) % 3);
-    }, 1500);
+      setActiveScreenIndex((prev) => (prev + 1) % 4);
+    }, 2000);
     return () => clearTimeout(timer);
   }, [activeScreenIndex]);
 
@@ -444,7 +444,7 @@ export default function Home() {
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] bg-[#16A34A] rounded-[60px] blur-[80px] opacity-[0.12] -z-10 pointer-events-none" />
 
                 {/* Screen 1: Map */}
-                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 ${activeScreenIndex === 0 ? "opacity-100" : "opacity-0"}`}>
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 ${activeScreenIndex === 0 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
                   <CityMap intensity={1} />
                   
                   {/* Status Bar */}
@@ -481,7 +481,7 @@ export default function Home() {
                 </div>
 
                 {/* Screen 2: Streak */}
-                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 1 ? "opacity-100" : "opacity-0"}`}>
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 1 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
                   {/* Status Bar */}
                   <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
                     <span>9:41</span>
@@ -535,7 +535,7 @@ export default function Home() {
                 </div>
 
                 {/* Screen 3: Leaderboard */}
-                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 2 ? "opacity-100" : "opacity-0"}`}>
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 2 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
                   {/* Status Bar */}
                   <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
                     <span>9:41</span>
@@ -581,7 +581,7 @@ export default function Home() {
                 </div>
 
                 {/* Screen 4: Shareable Card */}
-                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] transition-opacity duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 3 ? "opacity-100" : "opacity-0"}`}>
+                <div className={`showcase-screen absolute inset-0 bg-[#FAFBFC] lg:transition-opacity lg:duration-300 flex flex-col px-5 pt-[14%] pb-[18%] text-[#1F2937] ${activeScreenIndex === 3 ? "block lg:block lg:opacity-100" : "hidden lg:block lg:opacity-0"}`}>
                   {/* Status Bar */}
                   <div className="absolute top-[3%] left-0 right-0 h-9 flex items-center justify-between px-6 z-40 text-gray-800 font-sans font-bold text-[8.5px] pointer-events-none">
                     <span>9:41</span>
