@@ -129,6 +129,15 @@ export default function Home() {
     }
   }, []);
 
+  // Auto-cycle mobile showcase screens every 1.5 seconds (resets dynamically on user manual tap)
+  React.useEffect(() => {
+    if (typeof window !== "undefined" && window.innerWidth >= 1024) return;
+    const timer = setTimeout(() => {
+      setActiveScreenIndex((prev) => (prev + 1) % 3);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [activeScreenIndex]);
+
   const activeRoutine = ROUTINES[timePeriod];
 
   useGSAP(() => {
@@ -261,7 +270,7 @@ export default function Home() {
     <main ref={container} className="relative bg-[#FAFBFC] text-[#1F2937] overflow-x-hidden selection:bg-[#16A34A] selection:text-white">
       
       {/* ── NAV ────────────────────────────────────────────────────── */}
-      <nav className="fixed top-0 left-0 w-full z-50 bg-transparent">
+      <nav className="absolute top-0 left-0 w-full z-50 bg-transparent">
         <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-start">
           <div className="flex items-center gap-4">
             <Image src="/main-logo-transparent.png" alt="Revo Logo" width={24} height={24} priority style={{ height: "auto" }} />
