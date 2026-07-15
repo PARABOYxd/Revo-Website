@@ -8,7 +8,7 @@ export default function PhoneFrame({ children, className = "" }: { children: Rea
       className={`relative ${className}`}
       style={{
         aspectRatio: "9 / 19.5",
-        filter: "drop-shadow(0 30px 60px rgba(15, 23, 42, 0.12)) drop-shadow(0 12px 24px rgba(15, 23, 42, 0.04))"
+        boxShadow: "0 30px 60px -15px rgba(15, 23, 42, 0.25), 0 12px 24px -10px rgba(15, 23, 42, 0.15)"
       }}
     >
       {/* Outer Phone Body (Natural Titanium gradient) */}
