@@ -39,7 +39,6 @@ const LIVE_LEDGER = [
   { r: "Arjun K.", a: "secured top 3 ranking at", z: "Necklace Road, Hyderabad", s: "12d", t: "3h ago" },
   { r: "Ananya D.", a: "secured top 3 ranking at", z: "Salt Lake, Kolkata", s: "18d", t: "4h ago" },
   { r: "Kabir M.", a: "completed coastal path at", z: "Marine Drive, Kochi", s: "5d", t: "5h ago" },
-  { r: "Rhea S.", a: "extended active streak at", z: "Sukhna Lake, Chandigarh", s: "10d", t: "6h ago" },
 ];
 
 const ROUTINES = {
@@ -900,17 +899,15 @@ export default function Home() {
             <span className="bg-gradient-to-r from-[#16A34A] via-[#22c55e] to-[#34D399] bg-clip-text text-transparent italic font-display font-normal lowercase">streets.</span>
           </h2>
           
-          <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest leading-relaxed max-w-sm mb-10 font-sans">
+          <p className="text-lg font-light max-w-sm text-[#4B5563] text-balance mb-8">
             Reserve your founding handle. Claim your home loop, challenge local hubs, and light up the city grid first.
           </p>
           
-          {/* Glassmorphic Container with Status Divider */}
-          <div className="w-full max-w-lg bg-white/70 backdrop-blur-xl border border-white rounded-[32px] p-6 lg:p-8 shadow-[0_30px_60px_rgba(22,163,74,0.04),0_10px_20px_rgba(0,0,0,0.01),inset_0_1px_0_rgba(255,255,255,0.8)]">
-            
+          <div className="w-full max-w-sm">
             <WaitlistForm dark={false} />
             
             {/* Micro-Details */}
-            <p className="text-[8px] text-gray-400 text-center mt-5 uppercase tracking-widest font-semibold leading-normal">
+            <p className="text-[9px] font-bold text-gray-400 text-center mt-5 uppercase tracking-widest leading-normal">
               Reserve your handle · Active city play · Early beta access
             </p>
           </div>
@@ -921,13 +918,12 @@ export default function Home() {
       <footer className="bg-white border-t border-gray-200 py-12 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-[9px] font-bold uppercase tracking-widest text-gray-400">
-            Revo © 2026 · Made in Mumbai
+            Revo © 2026 · Made in India
           </p>
           <div className="flex gap-6 text-[9px] font-bold uppercase tracking-widest text-gray-400">
             <Link href="/privacy" className="hover:text-[#16A34A] transition-colors cursor-pointer">Privacy</Link>
             <Link href="/terms" className="hover:text-[#16A34A] transition-colors cursor-pointer">Terms</Link>
-            {/* TODO: swap in real profile URLs */}
-            <a href="#" className="hover:text-gray-900 transition-colors cursor-pointer">Twitter</a>
+            <a href="#" className="hover:text-gray-900 transition-colors cursor-pointer">LinkedIn</a>
             <a href="#" className="hover:text-gray-900 transition-colors cursor-pointer">Instagram</a>
           </div>
         </div>

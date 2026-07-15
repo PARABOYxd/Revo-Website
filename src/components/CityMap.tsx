@@ -128,20 +128,50 @@ export default function CityMap({ intensity = 1, className = "" }: CityMapProps)
       {/* Hotspots */}
       {hotspots.map((h, i) => (
         <g key={`hs-${i}`}>
-          <circle cx={h.cx} cy={h.cy} r={h.r * 2.2} fill={`url(#rg-${i})`} />
-          <circle cx={h.cx} cy={h.cy} r={h.r * 0.6} fill="rgba(22,163,74,0.08)" />
-          <circle cx={h.cx} cy={h.cy} r="7" fill="#16a34a" filter="url(#glow-strong)" />
-          <circle cx={h.cx} cy={h.cy} r="3.5" fill="white" />
-          <circle
-            cx={h.cx} cy={h.cy}
-            r={8}
-            className="hotspot-ring"
-            fill="none"
-            stroke="rgba(22,163,74,0.4)"
-            strokeWidth="1.5"
+          {/* Main radial glow heatmap circle */}
+          <circle cx={h.cx} cy={h.cy} r={h.r * 2.8} fill={`url(#rg-${i})`} />
+          <circle cx={h.cx} cy={h.cy} r={h.r * 1.5} fill={`url(#rg-${i})`} opacity="0.45" filter="url(#glow-strong)" />
+          
+          {/* Center core point */}
+          <circle cx={h.cx} cy={h.cy} r="6" fill="#16a34a" filter="url(#glow-strong)" />
+          <circle cx={h.cx} cy={h.cy} r="2.8" fill="white" />
+
+          {/* White Tooltip Card Background */}
+          <rect
+            x={h.cx + 15}
+            y={h.cy - 19}
+            width={112}
+            height={34}
+            rx={8}
+            fill="#FFFFFF"
+            stroke="rgba(31, 41, 55, 0.08)"
+            strokeWidth="1.2"
+            filter="url(#glow-soft)"
           />
-          <text x={h.cx + 14} y={h.cy - 6} fill="#1F2937" fontSize="8" fontFamily="monospace" fontWeight="800" letterSpacing="0.1em">{h.label}</text>
-          <text x={h.cx + 14} y={h.cy + 7} fill="#6B7280" fontSize="6.5" fontFamily="monospace" letterSpacing="0.05em">{h.runners} ACTIVE</text>
+
+          {/* High contrast labels inside the white card */}
+          <text 
+            x={h.cx + 25} 
+            y={h.cy - 6} 
+            fill="#1F2937" 
+            fontSize="8.5" 
+            fontFamily="var(--font-sans)" 
+            fontWeight="900" 
+            letterSpacing="0.02em"
+          >
+            {h.label}
+          </text>
+          <text 
+            x={h.cx + 25} 
+            y={h.cy + 7} 
+            fill="#16A34A" 
+            fontSize="7" 
+            fontFamily="monospace" 
+            fontWeight="900" 
+            letterSpacing="0.05em"
+          >
+            {h.runners} ACTIVE
+          </text>
         </g>
       ))}
     </svg>
