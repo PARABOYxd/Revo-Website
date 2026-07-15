@@ -15,62 +15,36 @@ export default async function Image() {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          background: "#FAFBFC",
+          background: "#1A1A2E",
           position: "relative",
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            backgroundImage:
-              "linear-gradient(#1F2937 1px, transparent 1px), linear-gradient(90deg, #1F2937 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-            opacity: 0.04,
-          }}
-        />
+        <div style={{ position: "absolute", width: 700, height: 700, borderRadius: "50%", background: "#FF5A1F", filter: "blur(180px)", opacity: 0.28, top: -120, left: -80 }} />
+        <div style={{ position: "absolute", width: 500, height: 500, borderRadius: "50%", background: "#FF5A1F", filter: "blur(160px)", opacity: 0.18, bottom: -140, right: -60 }} />
         <span
           style={{
             display: "flex",
             alignItems: "center",
             gap: 10,
-            padding: "10px 22px",
+            padding: "10px 24px",
             borderRadius: 999,
-            background: "rgba(22,163,74,0.1)",
-            border: "1px solid rgba(22,163,74,0.25)",
-            color: "#16A34A",
+            background: "rgba(255,90,31,0.12)",
+            border: "1px solid rgba(255,90,31,0.35)",
+            color: "#FF8A5B",
             fontSize: 22,
             fontWeight: 800,
             letterSpacing: 4,
             textTransform: "uppercase",
-            marginBottom: 36,
+            marginBottom: 40,
           }}
         >
-          India's Live Active Grid
+          Live in Mumbai
         </span>
-        <div
-          style={{
-            display: "flex",
-            fontSize: 128,
-            fontWeight: 900,
-            color: "#1F2937",
-            letterSpacing: -4,
-            lineHeight: 0.9,
-          }}
-        >
-          Leave your&nbsp;
-          <span style={{ color: "#16A34A", fontStyle: "italic", fontWeight: 400 }}>mark.</span>
+        <div style={{ display: "flex", fontSize: 132, fontWeight: 800, color: "#FFFFFF", letterSpacing: -2, lineHeight: 0.9, textTransform: "uppercase" }}>
+          Leave your&nbsp;<span style={{ color: "#FF5A1F" }}>mark.</span>
         </div>
-        <div
-          style={{
-            display: "flex",
-            fontSize: 30,
-            color: "#4B5563",
-            marginTop: 28,
-            fontWeight: 400,
-          }}
-        >
-          Join the Revo waitlist
+        <div style={{ display: "flex", fontSize: 30, color: "rgba(255,255,255,0.55)", marginTop: 30, fontWeight: 400 }}>
+          You showed up. Now the city sees it.
         </div>
       </div>
     ),

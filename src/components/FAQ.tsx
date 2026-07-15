@@ -2,58 +2,38 @@
 
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown } from "lucide-react";
+import { Plus } from "lucide-react";
 
 const FAQS = [
-  {
-    q: "Is Revo free?",
-    a: "Yes. Revo is free to join and free to use. Founding members get early access and a permanent badge, but there's no paywall to run, walk, or show up on your local grid.",
-  },
-  {
-    q: "When does it launch?",
-    a: "We're rolling out first in Mumbai, starting with our founding waitlist members. Join now to get an early invite as we open up neighbourhood by neighbourhood.",
-  },
-  {
-    q: "Do walkers count?",
-    a: "Yes — walkers count exactly the same as runners. Revo rewards showing up and staying consistent, not pace. Beginners are first-class citizens on the grid.",
-  },
-  {
-    q: "Is my exact route public?",
-    a: "No. Your precise route stays private. Revo only shows area-level activity — your neighbourhood's heatmap and leaderboard — never your exact path or live location.",
-  },
-  {
-    q: "Which areas are supported at launch?",
-    a: "We're starting with Shivaji Park, Bandra, Powai, Marine Drive, and Juhu, with more Mumbai neighbourhoods added right after launch based on waitlist demand.",
-  },
+  { q: "Is it free?", a: "Yes, completely. Founding Runners get a permanent badge and early access, but there's no paywall to run, walk, or show up on your local grid." },
+  { q: "When does it launch?", a: "Mumbai first, starting with waitlist members. Join now for an early invite as we open neighbourhood by neighbourhood." },
+  { q: "Do walkers count?", a: "Yes — exactly the same as runners. Revo rewards showing up and staying consistent, not pace." },
+  { q: "Is my route public?", a: "No. Only area-level activity is shown — your neighbourhood's heatmap and rank. Your exact path stays private." },
 ];
 
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section className="w-full bg-[#FAFBFC] py-20 sm:py-28 px-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
-          <p className="text-[10px] text-[#16A34A] font-bold uppercase tracking-[0.25em] mb-3">FAQ</p>
-          <h2 className="font-display font-black text-[#1F2937] leading-[0.95] tracking-tight" style={{ fontSize: "clamp(28px, 4.5vw, 44px)" }}>
-            Questions, answered.
-          </h2>
-        </div>
+    <section className="bg-[#1A1A2E] px-5 py-24 sm:py-28">
+      <div className="mx-auto max-w-xl">
+        <h2 className="mb-10 font-display text-center uppercase leading-[0.9] tracking-wide text-white" style={{ fontSize: "clamp(30px, 4.5vw, 48px)" }}>
+          Fair questions.
+        </h2>
 
-        <div className="divide-y divide-gray-200 border-t border-b border-gray-200">
+        <div className="space-y-3">
           {FAQS.map((f, i) => {
-            const isOpen = openIndex === i;
+            const isOpen = open === i;
             return (
-              <div key={f.q}>
+              <div key={f.q} className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
                 <button
-                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  onClick={() => setOpen(isOpen ? null : i)}
                   aria-expanded={isOpen}
-                  className="w-full flex items-center justify-between gap-4 py-5 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#16A34A]/40 rounded-lg"
+                  className="flex w-full items-center gap-4 px-5 py-4 text-left focus:outline-none"
                 >
-                  <span className="font-display font-bold text-base sm:text-lg text-[#1F2937]">{f.q}</span>
-                  <ChevronDown
-                    className={`w-4 h-4 text-[#16A34A] shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}
-                  />
+                  <span className="font-mono text-[10px] font-bold text-[#FF5A1F]">0{i + 1}</span>
+                  <span className="flex-1 text-[15px] font-semibold text-white">{f.q}</span>
+                  <Plus className={`h-4 w-4 shrink-0 text-[#FF5A1F] transition-transform duration-300 ${isOpen ? "rotate-45" : ""}`} />
                 </button>
                 <AnimatePresence initial={false}>
                   {isOpen && (
@@ -64,7 +44,7 @@ export default function FAQ() {
                       transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <p className="text-sm text-gray-500 leading-relaxed pb-5 pr-8">{f.a}</p>
+                      <p className="px-5 pb-5 pl-14 text-sm leading-relaxed text-white/50">{f.a}</p>
                     </motion.div>
                   )}
                 </AnimatePresence>

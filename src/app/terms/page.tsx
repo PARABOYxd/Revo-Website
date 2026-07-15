@@ -6,34 +6,32 @@ import { ArrowLeft } from "lucide-react";
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-[#FAFBFC] text-[#1F2937] py-20 px-6 font-sans">
-      <div className="max-w-2xl mx-auto">
-        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 hover:text-[#16A34A] transition-colors mb-12">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to home
+    <main className="min-h-screen bg-[#1A1A2E] px-5 py-20 font-sans text-white">
+      <div className="mx-auto max-w-xl">
+        <Link href="/" className="mb-12 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-white/35 transition-colors hover:text-[#FF5A1F]">
+          <ArrowLeft className="h-3.5 w-3.5" /> Back home
         </Link>
-        
-        <h1 className="font-display font-black text-4xl uppercase tracking-tight mb-8">Terms of Service</h1>
-        <p className="text-gray-500 text-sm mb-6 font-mono">Last updated: July 13, 2026</p>
 
-        <div className="space-y-6 text-sm text-gray-600 leading-relaxed font-sans">
-          <p>
-            Welcome to Revo. By accessing our landing page, signing up for our waitlist, or interacting with our brand, you agree to comply with and be bound by the following terms of service.
-          </p>
-          
-          <h2 className="font-display font-bold text-lg text-gray-900 mt-8 uppercase tracking-wide">1. Waitlist Terms</h2>
-          <p>
-            Joining the waitlist reserves a placement for early beta access. It does not guarantee immediate access to our mobile application, which will roll out gradually across India based on locality demand.
-          </p>
+        <h1 className="font-display text-4xl uppercase tracking-wide text-white">Terms of Service</h1>
+        <p className="mt-3 font-mono text-xs text-white/35">Last updated July 13, 2026</p>
 
-          <h2 className="font-display font-bold text-lg text-gray-900 mt-8 uppercase tracking-wide">2. Founding Handles</h2>
-          <p>
-            User handles requested during waitlist or beta phases are subject to availability and verification. Revo reserves the right to reclaim, reassess, or transfer handles in the event of trademark infringement, squatting, or inappropriate behavior.
-          </p>
+        <div className="mt-10 space-y-7 text-sm leading-relaxed text-white/55">
+          <p>Welcome to Revo. By accessing this page, joining the waitlist, or interacting with our brand, you agree to the following terms.</p>
 
-          <h2 className="font-display font-bold text-lg text-gray-900 mt-8 uppercase tracking-wide">3. Code of Conduct</h2>
-          <p>
-            Revo is designed to build positive, healthy communities. Any attempt to exploit, manipulate, or spoof GPS location coordinates to inflate leaderboard rankings or streaks will result in immediate disqualification and waitlist suspension.
-          </p>
+          <div>
+            <h2 className="mb-2 font-display text-lg uppercase tracking-wide text-white">Waitlist terms</h2>
+            <p>Joining the waitlist reserves a placement for early beta access. It doesn't guarantee immediate app access, which rolls out gradually across Mumbai based on locality demand.</p>
+          </div>
+
+          <div>
+            <h2 className="mb-2 font-display text-lg uppercase tracking-wide text-white">Founding handles</h2>
+            <p>Handles requested during waitlist or beta are subject to availability and verification. Revo may reclaim or reassign handles in cases of trademark infringement, squatting, or abuse.</p>
+          </div>
+
+          <div>
+            <h2 className="mb-2 font-display text-lg uppercase tracking-wide text-white">Code of conduct</h2>
+            <p>Revo builds positive, healthy communities. Any attempt to spoof GPS to inflate rankings or streaks results in immediate disqualification and suspension.</p>
+          </div>
         </div>
       </div>
     </main>
