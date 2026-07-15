@@ -273,7 +273,7 @@ export default function Home() {
       </nav>
 
       {/* ── SCENE 1: THE HERO ─────────────────────────────────────── */}
-      <section ref={heroRef} className="min-h-screen lg:h-screen w-full relative flex items-center justify-center overflow-hidden bg-[#FAFBFC] py-20 lg:py-0">
+      <section ref={heroRef} className="min-h-screen lg:h-screen w-full relative flex items-center justify-center overflow-y-auto bg-[#FAFBFC] py-20 lg:py-0">
         {/* Map background */}
         <div className="absolute inset-0 w-full h-full">
           {mounted && <CityMap intensity={0.75} className="w-full h-full object-cover" />}
@@ -284,10 +284,10 @@ export default function Home() {
           <div className="hero-map-overlay absolute inset-0 bg-[#FAFBFC] opacity-0 pointer-events-none" />
         </div>
 
-        <div className="hero-content relative z-10 flex flex-col items-center justify-center text-center px-6 mt-16 pointer-events-auto">
+        <div className="hero-content relative z-10 flex flex-col items-center justify-center text-center px-6 mt-16 lg:mt-6 pointer-events-auto">
           
           {/* Active Grid Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16A34A]/10 border border-[#16A34A]/25 text-[#16A34A] text-[9.5px] font-black uppercase tracking-widest mb-6 animate-pulse">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#16A34A]/10 border border-[#16A34A]/25 text-[#16A34A] text-[9.5px] font-black uppercase tracking-widest mb-6 lg:mb-3 animate-pulse">
             <Globe className="w-3.5 h-3.5" /> India's Live Active Grid
           </span>
           
@@ -296,11 +296,11 @@ export default function Home() {
             <span className="italic font-display font-normal text-[#16A34A]">mark.</span>
           </h1>
           
-          <p className="mt-8 text-lg font-light max-w-sm text-[#4B5563] text-balance">
+          <p className="mt-8 lg:mt-4 text-lg font-light max-w-sm text-[#4B5563] text-balance">
             Your walks, runs, rides, and daily workouts map live, evolving routes on your city's active grid.
           </p>
 
-          <div id="hero-waitlist" className="mt-10 w-full max-w-sm scroll-mt-32">
+          <div id="hero-waitlist" className="mt-10 lg:mt-6 w-full max-w-sm scroll-mt-32">
             <WaitlistForm />
           </div>
 
@@ -310,7 +310,6 @@ export default function Home() {
           </p>
         </div>
       </section>
-
 
       {/* ── SCENE 2: APP SHOWCASE (APPLE STYLE) ───────────────────── */}
       <section ref={showcaseRef} className="w-full relative bg-[#FAFBFC] overflow-hidden flex flex-col justify-start lg:justify-between py-6 lg:py-10 lg:h-screen">

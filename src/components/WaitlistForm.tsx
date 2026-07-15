@@ -233,10 +233,25 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
 
         {/* STEP 2: Smooth profiling form */}
         {step === 2 && (
-          <div className={`w-full max-w-md border rounded-3xl p-6 sm:p-8 space-y-6 shadow-xl mx-auto animate-fade-in-up ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-100'}`}>
-            <div className="space-y-1">
-              <h3 className={`font-display font-bold text-2xl tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>Claim your handle</h3>
-              <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>You're almost on the list.</p>
+          <div 
+            data-lenis-prevent
+            className={`w-full max-w-md border rounded-3xl p-5 sm:p-6.5 space-y-4 shadow-xl mx-auto animate-fade-in-up max-h-[50vh] lg:max-h-[48vh] overflow-y-auto scrollbar-none pr-1.5 ${dark ? 'bg-[#0f172a] border-white/10' : 'bg-white border-gray-100'}`}
+          >
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <h3 className={`font-display font-bold text-2xl tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>Almost there</h3>
+                <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>We just need a few details.</p>
+              </div>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)}
+                className={`hidden lg:block p-1.5 rounded-full hover:bg-black/5 dark:hover:bg-white/10 transition-colors ${dark ? 'text-gray-400 hover:text-white' : 'text-gray-500 hover:text-gray-800'}`}
+              >
+                <span className="sr-only">Close</span>
+                <svg className="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2.5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
             </div>
 
             <form onSubmit={handleFinalSubmit} className="space-y-4">
@@ -254,44 +269,29 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
                     />
                   </div>
                   <div className="col-span-2">
-                    <label className={`block text-[10px] font-bold uppercase tracking-wider mb-1.5 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Username</label>
-                    <div className="relative">
-                      <span className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm ${dark ? 'text-gray-500' : 'text-gray-400'}`}>@</span>
-                      <input
-                        type="text"
-                        required
-                        value={formData.username}
-                        onChange={(e) => {
-                          setError("");
-                          setFormData({ ...formData, username: e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, '') });
-                        }}
-                        className={`w-full pl-8 pr-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors ${dark ? 'bg-white/5 border-white/10 text-white focus:border-emerald-500/50' : 'bg-gray-50 border-gray-200 text-gray-900 focus:border-gray-400'}`}
-                      />
-                    </div>
-                  </div>
-                  <div className="col-span-2">
                     <label className={`block text-[10px] font-bold uppercase tracking-wider mb-1.5 ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Your Area</label>
-                    <div className="flex flex-wrap gap-2">
+                    <select
+                      required
+                      value={formData.area}
+                      onChange={(e) => {
+                        setError("");
+                        setFormData({ ...formData, area: e.target.value as Area });
+                      }}
+                      className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none transition-colors cursor-pointer ${
+                        dark
+                          ? "bg-[#0f172a] border-white/10 text-white focus:border-emerald-500/50"
+                          : "bg-gray-50 border-gray-200 text-[#1F2937] focus:border-gray-400"
+                      }`}
+                    >
+                      <option value="" disabled className={dark ? "bg-[#0f172a] text-gray-400" : "bg-white text-gray-500"}>
+                        Select your hub neighbourhood
+                      </option>
                       {AREAS.map((a) => (
-                        <button
-                          key={a}
-                          type="button"
-                          onClick={() => {
-                            setError("");
-                            setFormData({ ...formData, area: a });
-                          }}
-                          className={`px-3.5 py-2 rounded-full text-[11px] font-bold uppercase tracking-wide border transition-colors ${
-                            formData.area === a
-                              ? "bg-[#16A34A] border-[#16A34A] text-white"
-                              : dark
-                                ? "bg-white/5 border-white/10 text-gray-300 hover:border-white/30"
-                                : "bg-gray-50 border-gray-200 text-gray-600 hover:border-gray-400"
-                          }`}
-                        >
+                        <option key={a} value={a} className={dark ? "bg-[#0f172a] text-white" : "bg-white text-[#1F2937]"}>
                           {a}
-                        </button>
+                        </option>
                       ))}
-                    </div>
+                    </select>
                     {formData.area === "Other" && (
                       <input
                         type="text"
