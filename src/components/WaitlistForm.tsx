@@ -42,8 +42,9 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
   const [referralCode, setReferralCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [isReturning, setIsReturning] = useState(false);
+  const [isSubmittingEmail, setIsSubmittingEmail] = useState(false);
 
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!EMAIL_RE.test(formData.email)) {
       setEmailError("Enter a valid email address.");
@@ -67,13 +68,45 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
       return;
     }
 
-    const baseUsername = formData.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
-    setFormData((prev) => ({ ...prev, username: baseUsername }));
-    setIsReturning(false);
-    setStep(2);
+    setIsSubmittingEmail(true);
+    try {
+      // Register email immediately on the server spreadsheet in Step 1
+      const response = await fetch("/api/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          name: "",
+          username: "",
+          area: "Pending"
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to write email to server spreadsheet");
+      }
+
+      const result = await response.json();
+      setQueuePosition(result.position);
+      setReferralCode(result.refId);
+
+      const baseUsername = formData.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+      setFormData((prev) => ({ ...prev, username: baseUsername }));
+      setIsReturning(false);
+      setStep(2);
+    } catch (err) {
+      console.error("Step 1 email logging error:", err);
+      // Fallback: Proceed to step 2 anyway so user can complete registration
+      const baseUsername = formData.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+      setFormData((prev) => ({ ...prev, username: baseUsername }));
+      setIsReturning(false);
+      setStep(2);
+    } finally {
+      setIsSubmittingEmail(false);
+    }
   };
 
-  const handleFinalSubmit = (e: React.FormEvent) => {
+  const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const resolvedArea = formData.area === "Other" ? formData.areaOther.trim() : formData.area;
 
@@ -92,26 +125,45 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
         return;
       }
 
-      const position = WAITLIST_BASE_COUNT + signups.length + 1;
+      // Send to server to append to waitlist.csv spreadsheet
+      const response = await fetch("/api/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: formData.email,
+          name: formData.name,
+          username: formData.username,
+          area: resolvedArea,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to write to spreadsheet server");
+      }
+
+      const result = await response.json();
+      const position = result.position;
+      const refId = result.refId;
+
       const newSignup: Signup = {
         email: formData.email,
         name: formData.name,
         username: formData.username,
         area: resolvedArea,
         date: new Date().toISOString(),
-        refId: Math.random().toString(36).substring(2, 8).toUpperCase(),
+        refId,
         position,
       };
       signups.push(newSignup);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(signups));
 
       setQueuePosition(position);
-      setReferralCode(newSignup.refId);
+      setReferralCode(refId);
       track("waitlist_submit", { area: resolvedArea });
       setStep(3);
     } catch (err) {
       console.error(err);
-      setStep(3);
+      setError("Registration failed. Please try again.");
     }
   };
 
@@ -158,14 +210,15 @@ export default function WaitlistForm({ dark = false }: { dark?: boolean }) {
                 />
                 <button
                   type="submit"
-                  className={`text-[10px] font-sans font-bold px-7 py-3.5 rounded-full uppercase tracking-widest transition duration-200 flex items-center justify-center gap-1 active:scale-[0.97] shrink-0 ${
+                  disabled={isSubmittingEmail}
+                  className={`text-[10px] font-sans font-bold px-7 py-3.5 rounded-full uppercase tracking-widest transition duration-200 flex items-center justify-center gap-1 active:scale-[0.97] shrink-0 disabled:opacity-75 disabled:pointer-events-none ${
                     dark
                       ? "bg-emerald-500 hover:bg-emerald-400 text-white"
                       : "bg-[#1F2937] hover:bg-black text-white"
                   }`}
                 >
-                  <span>Join</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <span>{isSubmittingEmail ? "Joining..." : "Join"}</span>
+                  {!isSubmittingEmail && <ArrowRight className="w-3.5 h-3.5" />}
                 </button>
               </div>
 

@@ -4,6 +4,9 @@ export const WAITLIST_BASE_COUNT = 1200;
 
 export const EARLY_ACCESS_SPOTS_TOTAL = 500;
 
+// Set your Google Sheets Apps Script Web App URL here to store signups directly in Google Sheets
+export const GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbw-irJZDpcLOevrIOEhhQsZxeJ4jtqvB-bUxn_LpZmJY28GKnpx9Q33ZALi8QlMfEVQHA/exec"; 
+
 export const AREAS = [
   "Shivaji Park",
   "Bandra",
